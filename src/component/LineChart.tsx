@@ -43,7 +43,6 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
             onMoveShouldSetPanResponder: () => true,
             onPanResponderMove: (event, gestureState) => {
                 if (event.nativeEvent.touches.length >= 2) {
-                    //console.log("zoom")
                 } else {
                     const newOffsetX = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
                     const newOffsetY = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
@@ -59,26 +58,63 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
         })
     ).current;
 
-    const maxY = Math.max(...values.map(v => v.y));
-    const chartDataPoints: DataPoint[] = [];
+    const maxY = Math.max(...values.flat().map(v => v.y));
+    const minY = Math.min(...values.flat().map(v => v.y));
+    const chartDataPoints: DataPoint[][] = [];
     const yAxisPoints: DataPoint[] = [];
-    const points = values
-        .map((v, i) => {
-            const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
-            const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
-            const chartDataPoint: DataPoint = {
-                values: { x: String(x), y }
-            };
-            chartDataPoints.push(chartDataPoint);
-            return `${x},${y}`;
-        })
-        .join(" ");
+
+    const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
+
+    let pointsArray: string[] = [];
+    values.map(chartValues => {
+        let points: string = "";
+        let dataPointArray: DataPoint[] = [];
+        chartValues.map((v, i) => {
+            const x = (i / (chartValues.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+            if (Math.abs(minY) > maxY) {
+                const y = ((chartHeight - chartPadding) - (v.y / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
+                const chartDataPoint: DataPoint = {
+                    values: { x: String(x), y }
+                };
+                dataPointArray.push(chartDataPoint);
+                points = points.concat(` ${x},${y}`);
+            } else {
+                const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
+                const chartDataPoint: DataPoint = {
+                    values: { x: String(x), y }
+                };
+                dataPointArray.push(chartDataPoint);
+                points = points.concat(` ${x},${y}`);
+            }
+        });
+        pointsArray.push(points);
+        chartDataPoints.push(dataPointArray);
+
+    });
 
     for (let i: number = 0; i < 5; i++) {
-        const yAxisPoint: DataPoint = {
-            values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * maxY).toFixed(0)) }
-        };
-        yAxisPoints.push(yAxisPoint);
+        if (Math.abs(minY) >= maxY) {
+            const yAxisPoint: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(minY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPoint);
+
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(minY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
+        } else {
+            const yAxisPoint: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(maxY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPoint);
+
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
+        }
+
     }
     return (
         <View style={[
@@ -86,7 +122,7 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
             { alignItems: 'center', justifyContent: 'center' },
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 400 400`} style={{ backgroundColor: 'dodgerblue' }}>
+                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 300 300`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,100)">
                         <Polyline
                             key={"axis"}
@@ -109,24 +145,31 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
                                 <Text x={0} y={`${points?.values?.y + 5}`} color={"blue"} alignmentBaseline='center'>{points?.values?.label}</Text>
                             </React.Fragment>
                         )}
-                        <Polyline
-                            key={"data-line"}
-                            points={points}
-                            fill="none"
-                            stroke="green"
-                            strokeWidth={2}
-                        />
-                        {chartDataPoints.map((points, index) =>
-                            < React.Fragment key={index + "group"}>
-                                <Circle
-                                    key={index * 100}
-                                    cx={points?.values?.x}
-                                    cy={points?.values?.y}
-                                    r="5"
-                                    stroke="green"
-                                    fill="green"
+                        {pointsArray.map((points, index) => {
+                            return (
+                                <Polyline
+                                    key={"data-line-" + index}
+                                    points={points}
+                                    fill="none"
+                                    stroke={colorArray[index]}
+                                    strokeWidth={2}
                                 />
-                            </React.Fragment>
+                            )
+                        })}
+
+                        {chartDataPoints.map((points, index) =>
+                            points.map((point, idx) => (
+                                < React.Fragment key={index + idx + "group"}>
+                                    <Circle
+                                        key={index * 100}
+                                        cx={point?.values?.x}
+                                        cy={point?.values?.y}
+                                        r="5"
+                                        stroke={colorArray[index]}
+                                        fill={colorArray[index]}
+                                    />
+                                </React.Fragment>
+                            ))
 
                         )}
                     </G>

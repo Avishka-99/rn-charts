@@ -7,10 +7,10 @@ export interface ChartData {
      */
     name: string;
     values: {
-        x: string;      // for example, x-axis value
-        y: number;      // y-axis value
-    }[];
-}
+        x: string;
+        y: number;
+    }[][];
+}[]
 
 export interface DataPoint {
     values: {

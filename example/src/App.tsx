@@ -6,24 +6,30 @@ import type { ChartData } from '@avi99/rn-charts';
 export default function App() {
   const data: ChartData = {
     name: "Sales",
-    values: [
+    values: [[
       { x: '1', y: 0 },
       { x: '2', y: 10 },
       { x: '3', y: 40 },
       { x: '4', y: 30 },
-      { x: '5', y: 80 },
+      { x: '5', y: -40 },
       { x: '6', y: 60 },
       { x: '7', y: 100 },
-      { x: '8', y: 90 },
+      { x: '8', y: 98 },
       { x: '9', y: 130 },
-      { x: '10', y: -120 },
-      { x: '11', y: 160 },
-      { x: '12', y: 140 },
-      { x: '13', y: 180 },
-      { x: '14', y: 170 },
-      { x: '15', y: 200 },
-
-    ],
+      { x: '10', y: 13 },
+      { x: '11', y: 160 }],
+    [
+      { x: '1', y: 50 },
+      { x: '2', y: 23 },
+      { x: '3', y: 53 },
+      { x: '4', y: 30 },
+      { x: '5', y: 40 },
+      { x: '6', y: 60 },
+      { x: '7', y: 23 },
+      { x: '8', y: 90 },
+      { x: '9', y: 243 },
+      { x: '10', y: 13 },
+      { x: '11', y: 43 }]],
   };
   return (
     <View style={styles.container}>
