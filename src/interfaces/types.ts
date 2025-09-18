@@ -12,6 +12,16 @@ export interface ChartData {
     }[][];
 }[]
 
+export interface ColumnChartData {
+    name: string;
+    values: {
+        x: string;
+        y: number;
+    }[];
+}
+
+
+
 export interface DataPoint {
     values: {
         x: string;

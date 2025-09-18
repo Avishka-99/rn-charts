@@ -1,5 +1,5 @@
-import { View, StyleSheet, PanResponder, Animated } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { View, StyleSheet, PanResponder, Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import Svg, {
     Circle,
     Ellipse,
@@ -24,18 +24,19 @@ import Svg, {
     Mask,
 
 } from 'react-native-svg';
-import type { ChartData, DataPoint } from '../interfaces/types';
-import { Colors } from '../utils/enums';
+import type { ChartData, DataPoint } from '../../interfaces/types';
+import { Colors } from '../../utils/enums';
+import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 
 const LineChart: React.FC<ChartData> = ({ name, values }) => {
-    const chartWidth: number = 400;
-    const chartHeight: number = 200;
-    const chartPadding: number = 30;
+    const chartWidth: number = CHART_WIDTH;
+    const chartHeight: number = CHART_HEIGHT;
+    const chartPadding: number = CHART_PADDING;
 
     const [offsetX, setOffsetX] = useState(0);
     const [offsetY, setOffsetY] = useState(0);
-    const offsetRefX = useRef(0); // for PanResponder
-    const offsetRefY = useRef(0); // for PanResponder
+    const offsetRefX = useRef(0);
+    const offsetRefY = useRef(0);
     const pan = useRef(new Animated.ValueXY()).current;
     const panResponder = useRef(
         PanResponder.create({
@@ -148,7 +149,7 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
                         {pointsArray.map((points, index) => {
                             return (
                                 <Polyline
-                                    key={"data-line-" + index}
+                                    key={"data-line-" + index + Date.now().toString()}
                                     points={points}
                                     fill="none"
                                     stroke={colorArray[index]}
