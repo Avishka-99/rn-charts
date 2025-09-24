@@ -1,33 +1,10 @@
 import type { ColumnChartProps, DataPoint } from '../../interfaces/types';
 import { View, StyleSheet, PanResponder, Animated } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import Svg, {
-    Circle,
-    Ellipse,
-    G,
-    Text,
-    TSpan,
-    TextPath,
-    Path,
-    Polygon,
-    Polyline,
-    Line,
-    Rect,
-    Use,
-    Image,
-    Symbol,
-    Defs,
-    LinearGradient,
-    RadialGradient,
-    Stop,
-    ClipPath,
-    Pattern,
-    Mask,
-
-} from 'react-native-svg';
+import React, { useRef, useState } from 'react';
+import Svg, { G, Text, Rect } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
 
-const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
+const BarChart: React.FC<ColumnChartProps> = ({ name, values }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -63,11 +40,11 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
     ).current;
 
 
-    let pointsArray: { label: string, value: number }[] = [];
+    let pointsArray: { label: string, value: number, exactValue: number }[] = [];
     values.map((v, i) => {
         const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
-        pointsArray.push({ label: v.x, value: y });
+        pointsArray.push({ label: v.x, value: y, exactValue: v.y });
     });
 
 
@@ -79,26 +56,36 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
                 <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 500 500`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,100)">
-                        <Polyline
+                        {/* <Polyline
                             key={"axis"}
                             points={`${chartPadding},${chartHeight - chartPadding} ${xAxisLength},${chartHeight - chartPadding}`}
                             fill="none"
                             stroke={'black'}
                             strokeWidth="2"
-                        />
+                        /> */}
 
                         {pointsArray.map((points, index) => {
                             return (
-                                <Rect
-                                    key={index + "bar" + Date.now().toString()}
-                                    x={(10 + BAR_WIDTH) * (index + 1) - BAR_WIDTH}
-                                    y={points.value}
-                                    width={BAR_WIDTH}
-                                    height={points.value === (chartHeight - chartPadding) ? 0 : (chartHeight - chartPadding) - points.value}
-                                    stroke="red"
-                                    strokeWidth="2"
-                                    fill="yellow"
-                                />
+                                <React.Fragment key={index + "group"}>
+                                    <Rect
+                                        key={index + "bar" + Date.now().toString()}
+                                        y={(10 + BAR_WIDTH) * (index + 1) - BAR_WIDTH}
+                                        x={20}
+                                        height={BAR_WIDTH}
+                                        width={points.value === (chartHeight - chartPadding) ? 0 : (chartHeight - chartPadding) - points.value}
+                                        stroke="red"
+                                        strokeWidth="2"
+                                        fill="yellow"
+                                        rx={5}
+                                        ry={5}
+                                    />
+                                    <Text x={25 + (points.value === (chartHeight - chartPadding) ? 0 : (chartHeight - chartPadding) - points.value)} y={(10 + BAR_WIDTH) * (index + 1) - (BAR_WIDTH / 2.5)} >
+                                        {points.label} - {points.exactValue}
+                                    </Text>
+
+
+                                </React.Fragment>
+
                             )
                         })}
 
@@ -153,4 +140,4 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
 
 
 }
-export default ColumnChart;
+export default BarChart;

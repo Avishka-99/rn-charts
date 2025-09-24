@@ -1,4 +1,3 @@
-import type { ColumnChartProps, DataPoint } from '../../interfaces/types';
 import { View, StyleSheet, PanResponder, Animated } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import Svg, {
@@ -25,9 +24,11 @@ import Svg, {
     Mask,
 
 } from 'react-native-svg';
-import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
+import type { ChartData, DataPoint } from '../../interfaces/types';
+import { Colors } from '../../utils/enums';
+import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 
-const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
+const SlopeChart: React.FC<ChartData> = ({ name, values }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -36,11 +37,7 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
     const [offsetY, setOffsetY] = useState(0);
     const offsetRefX = useRef(0);
     const offsetRefY = useRef(0);
-
-    const maxY: number = Math.max(...values.map(v => v.y));
-    const xAxisLength: number = values.length * (BAR_WIDTH + 10) + 10;
-
-
+    const pan = useRef(new Animated.ValueXY()).current;
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -62,48 +59,80 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
         })
     ).current;
 
+    const maxY = Math.max(...values.flat().map(v => v.y));
+    const minY = Math.min(...values.flat().map(v => v.y));
+    const chartDataPoints: DataPoint[][] = [];
+    const yAxisPoints: DataPoint[] = [];
 
-    let pointsArray: { label: string, value: number }[] = [];
-    values.map((v, i) => {
-        const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
-        const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
-        pointsArray.push({ label: v.x, value: y });
+    const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
+
+    let pointsArray: string[] = [];
+    values.map(chartValues => {
+        let points: string = "";
+        let dataPointArray: DataPoint[] = [];
+        chartValues.map((v, i) => {
+            const x = (i / (chartValues.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+            if (Math.abs(minY) > maxY) {
+                const y = ((chartHeight - chartPadding) - (v.y / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
+                const chartDataPoint: DataPoint = {
+                    values: { x: String(x), y }
+                };
+                dataPointArray.push(chartDataPoint);
+                points = points.concat(` ${x},${y}`);
+            } else {
+                const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
+                const chartDataPoint: DataPoint = {
+                    values: { x: String(x), y }
+                };
+                dataPointArray.push(chartDataPoint);
+                points = points.concat(` ${x},${y}`);
+            }
+        });
+        pointsArray.push(points);
+        chartDataPoints.push(dataPointArray);
+
     });
 
+    for (let i: number = 0; i < 5; i++) {
+        if (Math.abs(minY) >= maxY) {
+            const yAxisPoint: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(minY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPoint);
 
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(minY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
+        } else {
+            const yAxisPoint: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(maxY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPoint);
+
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
+        }
+
+    }
     return (
         <View style={[
             StyleSheet.absoluteFill,
-            { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
+            { alignItems: 'center', justifyContent: 'center' },
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 500 500`} style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 300 300`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,100)">
                         <Polyline
                             key={"axis"}
-                            points={`${chartPadding},${chartHeight - chartPadding} ${xAxisLength},${chartHeight - chartPadding}`}
+                            points={`${chartPadding},0 ${chartPadding},${chartHeight - chartPadding} ${chartWidth + chartPadding},${chartHeight - chartPadding}`}
                             fill="none"
-                            stroke={'black'}
+                            stroke={Colors.axis}
                             strokeWidth="2"
                         />
-
-                        {pointsArray.map((points, index) => {
-                            return (
-                                <Rect
-                                    key={index + "bar" + Date.now().toString()}
-                                    x={(10 + BAR_WIDTH) * (index + 1) - BAR_WIDTH}
-                                    y={points.value}
-                                    width={BAR_WIDTH}
-                                    height={points.value === (chartHeight - chartPadding) ? 0 : (chartHeight - chartPadding) - points.value}
-                                    stroke="red"
-                                    strokeWidth="2"
-                                    fill="yellow"
-                                />
-                            )
-                        })}
-
-
-                        {/* {yAxisPoints.map((points, index) =>
+                        {yAxisPoints.map((points, index) =>
                             < React.Fragment key={index + "group"}>
                                 <Line
                                     key={index + "x-dash"}
@@ -127,9 +156,9 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
                                     strokeWidth={2}
                                 />
                             )
-                        })} */}
+                        })}
 
-                        {/* {chartDataPoints.map((points, index) =>
+                        {chartDataPoints.map((points, index) =>
                             points.map((point, idx) => (
                                 < React.Fragment key={index + idx + "group"}>
                                     <Circle
@@ -143,14 +172,12 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
                                 </React.Fragment>
                             ))
 
-                        )} */}
+                        )}
                     </G>
                 </Svg>
             </View>
         </View>
     )
-
-
-
 }
-export default ColumnChart;
+
+export default SlopeChart;

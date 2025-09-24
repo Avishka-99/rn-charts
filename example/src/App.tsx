@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { LineChart, ColumnChart } from '@avi99/rn-charts';
-import type { ChartData, ColumnChartData } from '@avi99/rn-charts';
+import { LineChart, BarChart } from '@avi99/rn-charts';
+import type { ChartData, ColumnChartProps, SlopeChartProps } from '@avi99/rn-charts';
 
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
   //     { x: '10', y: 13 },
   //     { x: '11', y: 43 }]],
   // };
-  const data: ColumnChartData = {
+  const data: ColumnChartProps = {
     name: "Sales",
     values: [
       { x: '1', y: 0 },
@@ -46,10 +46,21 @@ export default function App() {
       { x: '10', y: 13 },
       { x: '11', y: 160 }],
   };
+
+  const data_2: SlopeChartProps = {
+    label_1: "Product A",
+    label_2: "Product B",
+    values: [
+      { value_1: 30, value_2: 70 },
+      { value_1: 50, value_2: 50 },
+      { value_1: 80, value_2: 20 },
+    ],
+  };
+
   return (
     <View style={styles.container}>
       {/* <LineChart {...data} /> */}
-      <ColumnChart {...data} />
+      <BarChart {...data} />
     </View>
   );
 }

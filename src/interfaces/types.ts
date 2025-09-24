@@ -12,7 +12,7 @@ export interface ChartData {
     }[][];
 }[]
 
-export interface ColumnChartData {
+export interface ColumnChartProps {
     name: string;
     values: {
         x: string;
@@ -28,4 +28,13 @@ export interface DataPoint {
         y: number;
         label?: string;
     };
+}
+export interface SlopeChartProps {
+    label_1: string,
+    label_2: string,
+    values: {
+        value_1: number,
+        value_2: number,
+    }[],
+
 }
