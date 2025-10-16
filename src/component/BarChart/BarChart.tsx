@@ -1,10 +1,10 @@
-import type { ColumnChartProps, DataPoint } from '../../interfaces/types';
+import type { BarChartProps, DataPoint } from '../../interfaces/types';
 import { View, StyleSheet, PanResponder, Animated } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Svg, { G, Text, Rect } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
 
-const BarChart: React.FC<ColumnChartProps> = ({ name, values }) => {
+const BarChart: React.FC<BarChartProps> = ({ name, values }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;

@@ -24,11 +24,11 @@ import Svg, {
     Mask,
 
 } from 'react-native-svg';
-import type { ChartData, DataPoint } from '../../interfaces/types';
+import type { ChartData, SlopeChartProps, DataPoint } from '../../interfaces/types';
 import { Colors } from '../../utils/enums';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 
-const SlopeChart: React.FC<ChartData> = ({ name, values }) => {
+const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -59,105 +59,91 @@ const SlopeChart: React.FC<ChartData> = ({ name, values }) => {
         })
     ).current;
 
-    const maxY = Math.max(...values.flat().map(v => v.y));
-    const minY = Math.min(...values.flat().map(v => v.y));
+    const maxY = Math.max(...values.flat().map(v => Math.max(v.y1, v.y2)));
+    const minY = Math.min(...values.flat().map(v => Math.min(v.y1, v.y2)));
     const chartDataPoints: DataPoint[][] = [];
-    const yAxisPoints: DataPoint[] = [];
-
     const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
-
     let pointsArray: string[] = [];
-    values.map(chartValues => {
+    let yAxixValues: number[] = [];
+    values.map((chartValues, i) => {
+        const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         let points: string = "";
-        let dataPointArray: DataPoint[] = [];
-        chartValues.map((v, i) => {
-            const x = (i / (chartValues.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
-            if (Math.abs(minY) > maxY) {
-                const y = ((chartHeight - chartPadding) - (v.y / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
-                const chartDataPoint: DataPoint = {
-                    values: { x: String(x), y }
-                };
-                dataPointArray.push(chartDataPoint);
-                points = points.concat(` ${x},${y}`);
-            } else {
-                const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
-                const chartDataPoint: DataPoint = {
-                    values: { x: String(x), y }
-                };
-                dataPointArray.push(chartDataPoint);
-                points = points.concat(` ${x},${y}`);
-            }
-        });
-        pointsArray.push(points);
-        chartDataPoints.push(dataPointArray);
+        if (Math.abs(minY) > maxY) {
+            const y = ((chartHeight - chartPadding) - (chartValues.y1 / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
+            const y2 = ((chartHeight - chartPadding) - (chartValues.y2 / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
+            const chartDataPoint: DataPoint = {
+                values: { x: String(100), y }
+            };
+            const chartDataPoint2: DataPoint = {
+                values: { x: String(300), y: y2 }
+            };
+            yAxixValues.push(y, y2)
+            chartDataPoints.push([chartDataPoint, chartDataPoint2]);
+            points = points.concat(`${100},${y}`);
+            points = points.concat(` ${300},${y2}`);
+            pointsArray.push(points)
+        } else {
+            const y = ((chartHeight - chartPadding) - (chartValues.y1 / maxY) * (chartHeight - 10 - chartPadding));
+            const y2 = ((chartHeight - chartPadding) - (chartValues.y2 / maxY) * (chartHeight - 10 - chartPadding));
+            const chartDataPoint: DataPoint = {
+                values: { x: String(100), y }
+            };
+            const chartDataPoint2: DataPoint = {
+                values: { x: String(300), y: y2 }
+            };
+            chartDataPoints.push([chartDataPoint, chartDataPoint2]);
+            points = points.concat(`${100},${y}`);
+            points = points.concat(` ${300},${y2}`);
 
+            yAxixValues.push(y, y2)
+
+            pointsArray.push(points)
+        }
     });
 
-    for (let i: number = 0; i < 5; i++) {
-        if (Math.abs(minY) >= maxY) {
-            const yAxisPoint: DataPoint = {
-                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(minY)).toFixed(0)) }
-            };
-            yAxisPoints.push(yAxisPoint);
+    console.log(pointsArray)
 
-            const yAxisPointNeg: DataPoint = {
-                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(minY)).toFixed(0)) }
-            };
-            yAxisPoints.push(yAxisPointNeg);
-        } else {
-            const yAxisPoint: DataPoint = {
-                values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(maxY)).toFixed(0)) }
-            };
-            yAxisPoints.push(yAxisPoint);
-
-            const yAxisPointNeg: DataPoint = {
-                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
-            };
-            yAxisPoints.push(yAxisPointNeg);
-        }
-
-    }
     return (
         <View style={[
             StyleSheet.absoluteFill,
-            { alignItems: 'center', justifyContent: 'center' },
+            { alignItems: 'center', justifyContent: 'center', backgroundColor: 'green' },
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 300 300`} style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 350 350`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,100)">
-                        <Polyline
-                            key={"axis"}
-                            points={`${chartPadding},0 ${chartPadding},${chartHeight - chartPadding} ${chartWidth + chartPadding},${chartHeight - chartPadding}`}
-                            fill="none"
-                            stroke={Colors.axis}
-                            strokeWidth="2"
+                        <Text x={70} y={Math.max(...yAxixValues) + 40} color={"blue"}>{label_1}</Text>
+                        <Text x={270} y={Math.max(...yAxixValues) + 40} color={"blue"}>{label_2}</Text>
+                        <Line
+                            key={"slope-y-axis" + Math.random() + Date.now()}
+                            x1={100}
+                            y1={Math.max(...yAxixValues) + 20}
+                            x2={100}
+                            y2={Math.min(...yAxixValues) - 20}
+                            stroke={'black'}
+                            strokeWidth={2}
                         />
-                        {yAxisPoints.map((points, index) =>
+                        <Line
+                            key={"slope-y-axis-" + Math.random() + Date.now()}
+                            x1={300}
+                            y1={Math.max(...yAxixValues) + 20}
+                            x2={300}
+                            y2={Math.min(...yAxixValues) - 20}
+                            stroke={'black'}
+                            strokeWidth={2}
+                        />
+                        {pointsArray.map((points, index) =>
                             < React.Fragment key={index + "group"}>
                                 <Line
                                     key={index + "x-dash"}
-                                    x1={- 5 + chartPadding}
-                                    y1={points?.values?.y}
-                                    x2={chartPadding}
-                                    y2={points?.values?.y}
-                                    stroke="blue"
-                                    strokeWidth={2}
-                                />
-                                <Text x={0} y={`${points?.values?.y + 5}`} color={"blue"} alignmentBaseline='center'>{points?.values?.label}</Text>
-                            </React.Fragment>
-                        )}
-                        {pointsArray.map((points, index) => {
-                            return (
-                                <Polyline
-                                    key={"data-line-" + index + Date.now().toString()}
-                                    points={points}
-                                    fill="none"
+                                    x1={points.split(" ")[0]?.split(",")[0]}
+                                    y1={points.split(" ")[0]?.split(",")[1]}
+                                    x2={points.split(" ")[1]?.split(",")[0]}
+                                    y2={points.split(" ")[1]?.split(",")[1]}
                                     stroke={colorArray[index]}
                                     strokeWidth={2}
                                 />
-                            )
-                        })}
-
+                            </React.Fragment>
+                        )}
                         {chartDataPoints.map((points, index) =>
                             points.map((point, idx) => (
                                 < React.Fragment key={index + idx + "group"}>
@@ -166,13 +152,14 @@ const SlopeChart: React.FC<ChartData> = ({ name, values }) => {
                                         cx={point?.values?.x}
                                         cy={point?.values?.y}
                                         r="5"
-                                        stroke={colorArray[index]}
+                                        stroke={'black'}
                                         fill={colorArray[index]}
                                     />
                                 </React.Fragment>
                             ))
 
                         )}
+
                     </G>
                 </Svg>
             </View>

@@ -20,6 +20,14 @@ export interface ColumnChartProps {
     }[];
 }
 
+export interface BarChartProps {
+    name: string;
+    values: {
+        x: string;
+        y: number;
+    }[];
+}
+
 
 
 export interface DataPoint {
@@ -33,8 +41,8 @@ export interface SlopeChartProps {
     label_1: string,
     label_2: string,
     values: {
-        value_1: number,
-        value_2: number,
+        y1: number,
+        y2: number,
     }[],
 
 }

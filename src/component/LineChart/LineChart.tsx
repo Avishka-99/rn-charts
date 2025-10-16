@@ -123,7 +123,7 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
             { alignItems: 'center', justifyContent: 'center' },
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 300 300`} style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 600 600`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,100)">
                         <Polyline
                             key={"axis"}
