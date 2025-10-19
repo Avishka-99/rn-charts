@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { LineChart, BarChart, SlopeChart } from '@avi99/rn-charts';
-import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps } from '@avi99/rn-charts';
+import { LineChart, BarChart, SlopeChart, LollipopChart } from '@avi99/rn-charts';
+import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps, LollipopChartProps } from '@avi99/rn-charts';
 
 
 export default function App() {
@@ -59,11 +59,28 @@ export default function App() {
     ],
   };
 
+  const lollipopChartData: LollipopChartProps = {
+    name: "Monthly Sales",
+    data: [
+      { label: "January", value: 30 },
+      { label: "February", value: 10 },
+      { label: "March", value: 40 },
+      { label: "April", value: 30 },
+      { label: "May", value: 40 },
+      { label: "June", value: 60 },
+      { label: "July", value: 100 },
+      { label: "August", value: 98 },
+      { label: "September", value: 65 },
+      { label: "October", value: 13 },
+      { label: "November", value: 58 },
+    ],
+  };
+
 
   return (
     <View style={styles.container}>
       {/* <LineChart {...data} /> */}
-      <SlopeChart {...slopeChartData} />
+      <LollipopChart {...lollipopChartData} />
     </View>
   );
 }

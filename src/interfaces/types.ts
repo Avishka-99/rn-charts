@@ -28,6 +28,14 @@ export interface BarChartProps {
     }[];
 }
 
+export interface LollipopChartProps {
+    name: string,
+    data: {
+        label: string,
+        value: number
+    }[];
+}
+
 
 
 export interface DataPoint {
