@@ -27,7 +27,7 @@ import Svg, {
 } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
 
-const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
+const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -37,8 +37,8 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
     const offsetRefX = useRef(0);
     const offsetRefY = useRef(0);
 
-    const maxY: number = Math.max(...values.map(v => v.y));
-    const xAxisLength: number = values.length * (BAR_WIDTH + 10) + 10;
+    const maxY: number = Math.max(...data.map(v => v.value));
+    const xAxisLength: number = data.length * (BAR_WIDTH + 10) + 10;
 
 
     const panResponder = useRef(
@@ -64,10 +64,10 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, values }) => {
 
 
     let pointsArray: { label: string, value: number }[] = [];
-    values.map((v, i) => {
-        const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
-        const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
-        pointsArray.push({ label: v.x, value: y });
+    data.map((v, i) => {
+        const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+        const y = ((chartHeight - chartPadding) - (v.value / maxY) * (chartHeight - 10 - chartPadding));
+        pointsArray.push({ label: v.label, value: y });
     });
 
 

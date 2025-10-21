@@ -28,7 +28,7 @@ import type { ChartData, DataPoint } from '../../interfaces/types';
 import { Colors } from '../../utils/enums';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 
-const LineChart: React.FC<ChartData> = ({ name, values }) => {
+const LineChart: React.FC<ChartData> = ({ name, data }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -59,28 +59,28 @@ const LineChart: React.FC<ChartData> = ({ name, values }) => {
         })
     ).current;
 
-    const maxY = Math.max(...values.flat().map(v => v.y));
-    const minY = Math.min(...values.flat().map(v => v.y));
+    const maxY = Math.max(...data.flat().map(v => v.value));
+    const minY = Math.min(...data.flat().map(v => v.value));
     const chartDataPoints: DataPoint[][] = [];
     const yAxisPoints: DataPoint[] = [];
 
     const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
 
     let pointsArray: string[] = [];
-    values.map(chartValues => {
+    data.map(chartValues => {
         let points: string = "";
         let dataPointArray: DataPoint[] = [];
         chartValues.map((v, i) => {
             const x = (i / (chartValues.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
             if (Math.abs(minY) > maxY) {
-                const y = ((chartHeight - chartPadding) - (v.y / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
+                const y = ((chartHeight - chartPadding) - (v.value / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
                 const chartDataPoint: DataPoint = {
                     values: { x: String(x), y }
                 };
                 dataPointArray.push(chartDataPoint);
                 points = points.concat(` ${x},${y}`);
             } else {
-                const y = ((chartHeight - chartPadding) - (v.y / maxY) * (chartHeight - 10 - chartPadding));
+                const y = ((chartHeight - chartPadding) - (v.value / maxY) * (chartHeight - 10 - chartPadding));
                 const chartDataPoint: DataPoint = {
                     values: { x: String(x), y }
                 };

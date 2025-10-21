@@ -1,50 +1,51 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { LineChart, BarChart, SlopeChart, LollipopChart } from '@avi99/rn-charts';
+import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart } from '@avi99/rn-charts';
 import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps, LollipopChartProps } from '@avi99/rn-charts';
 
 
 export default function App() {
   const data_2: ChartData = {
     name: "Sales",
-    values: [[
-      { x: '1', y: 0 },
-      { x: '2', y: 10 },
-      { x: '3', y: 40 },
-      { x: '4', y: 30 },
-      { x: '5', y: -40 },
-      { x: '6', y: 60 },
-      { x: '7', y: 100 },
-      { x: '8', y: 98 },
-      { x: '9', y: 130 },
-      { x: '10', y: 13 },
-      { x: '11', y: 160 }],
+    data: [[
+      { label: '1', value: 0 },
+      { label: '2', value: 10 },
+      { label: '3', value: 40 },
+      { label: '4', value: 30 },
+      { label: '5', value: -40 },
+      { label: '6', value: 60 },
+      { label: '7', value: 100 },
+      { label: '8', value: 98 },
+      { label: '9', value: 130 },
+      { label: '10', value: 13 },
+      { label: '11', value: 160 }],
     [
-      { x: '1', y: 50 },
-      { x: '2', y: 23 },
-      { x: '3', y: 53 },
-      { x: '4', y: 30 },
-      { x: '5', y: 40 },
-      { x: '6', y: 60 },
-      { x: '7', y: 23 },
-      { x: '8', y: 90 },
-      { x: '9', y: 243 },
-      { x: '10', y: 13 },
-      { x: '11', y: 43 }]],
+      { label: '1', value: 50 },
+      { label: '2', value: 23 },
+      { label: '3', value: 53 },
+      { label: '4', value: 30 },
+      { label: '5', value: 40 },
+      { label: '6', value: 60 },
+      { label: '7', value: 23 },
+      { label: '8', value: 90 },
+      { label: '9', value: 243 },
+      { label: '10', value: 13 },
+      { label: '11', value: 43 }]],
   };
   const data: BarChartProps = {
     name: "Sales",
-    values: [
-      { x: '1', y: 0 },
-      { x: '2', y: 10 },
-      { x: '3', y: 40 },
-      { x: '4', y: 30 },
-      { x: '5', y: 40 },
-      { x: '6', y: 60 },
-      { x: '7', y: 100 },
-      { x: '8', y: 98 },
-      { x: '9', y: 130 },
-      { x: '10', y: 13 },
-      { x: '11', y: 160 }],
+    data: [
+      { label: '1', value: 90 },
+      { label: '2', value: 10 },
+      { label: '3', value: 40 },
+      { label: '4', value: 30 },
+      { label: '5', value: 40 },
+      // { label: '6', value: 60 },
+      // { label: '7', value: 100 },
+      // { label: '8', value: 98 },
+      // { label: '9', value: 130 },
+      // { label: '10', value: 13 },
+      // { label: '11', value: 160 }
+    ],
   };
 
   const slopeChartData: SlopeChartProps = {
@@ -80,7 +81,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* <LineChart {...data} /> */}
-      <LollipopChart {...lollipopChartData} />
+      <CircularBarChart {...data} />
     </View>
   );
 }

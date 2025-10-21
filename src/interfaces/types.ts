@@ -6,25 +6,25 @@ export interface ChartData {
      * Chart name
      */
     name: string;
-    values: {
-        x: string;
-        y: number;
+    data: {
+        label: string;
+        value: number;
     }[][];
 }[]
 
 export interface ColumnChartProps {
     name: string;
-    values: {
-        x: string;
-        y: number;
+    data: {
+        label: string;
+        value: number;
     }[];
 }
 
 export interface BarChartProps {
     name: string;
-    values: {
-        x: string;
-        y: number;
+    data: {
+        label: string;
+        value: number;
     }[];
 }
 

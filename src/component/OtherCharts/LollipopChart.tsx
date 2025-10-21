@@ -1,7 +1,7 @@
 import { View, PanResponder, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
-import type { ChartData, LollipopChartProps, DataPoint } from '../../interfaces/types';
+import type { LollipopChartProps } from '../../interfaces/types';
 import Svg, { Circle, G, Line, Text } from 'react-native-svg';
 
 const LollipopChart: React.FC<LollipopChartProps> = ({ name, data }) => {
