@@ -54,3 +54,14 @@ export interface SlopeChartProps {
     }[],
 
 }
+
+export interface PopulationChartProps {
+    chartTitle: string;
+    leftLabel: string;
+    rightLabel: string;
+    data: {
+        category: string;
+        leftValue: number;
+        rightValue: number;
+    }[];
+}

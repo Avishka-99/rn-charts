@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart } from '@avi99/rn-charts';
-import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps, LollipopChartProps } from '@avi99/rn-charts';
+import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart, PopulationChart } from '@avi99/rn-charts';
+import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps, LollipopChartProps, PopulationChartProps } from '@avi99/rn-charts';
 
 
 export default function App() {
@@ -77,11 +77,29 @@ export default function App() {
     ],
   };
 
+  const samplePopulationData: PopulationChartProps = {
+    chartTitle: "Population Distribution by Age Group - 2025",
+    leftLabel: "Male Population",
+    rightLabel: "Female Population",
+    data: [
+      { category: "0-9", leftValue: 4200, rightValue: 4000 },
+      { category: "10-19", leftValue: 3900, rightValue: 4100 },
+      { category: "20-29", leftValue: 4500, rightValue: 4700 },
+      { category: "30-39", leftValue: 4300, rightValue: 4400 },
+      { category: "40-49", leftValue: 3800, rightValue: 4000 },
+      { category: "50-59", leftValue: 3100, rightValue: 3300 },
+      { category: "60-69", leftValue: 2500, rightValue: 2700 },
+      { category: "70-79", leftValue: 1800, rightValue: 2000 },
+      { category: "80+", leftValue: 900, rightValue: 1200 },
+    ],
+  };
+
+
 
   return (
     <View style={styles.container}>
       {/* <LineChart {...data} /> */}
-      <CircularBarChart {...data} />
+      <PopulationChart {...samplePopulationData} />
     </View>
   );
 }

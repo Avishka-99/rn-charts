@@ -17,17 +17,11 @@ const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
     }
 
     const arcDetails: arcData[] = [];
-
     const max: number = Math.max(...data.map(v => v.value));
-
     const roundUpToNext100 = (max: number) => Math.ceil(max / 100) * 200;
-
     const maximumValue: number = roundUpToNext100(max);
-
     data = data.sort((a, b) => a.value - b.value);
-
     data.map((arcDetail, index) => {
-        console.log(arcDetail);
         const radius = RADIAL_CHART_INITIAL_RADIUS + index * STROKE_WIDTH;
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const endAngle = ((360 / maximumValue) * arcDetail.value) + RADIAL_CHART_START_ANGLE;
@@ -101,10 +95,7 @@ const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
                             <Path key={Math.random()} d={arcDetail.path} stroke={colorArray[index]} strokeWidth={STROKE_WIDTH} fill="none" />
                         ))}
                     </G>
-
                 </Svg>
-
-
             </View>
         </View>
     );
