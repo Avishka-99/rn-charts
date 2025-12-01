@@ -1,11 +1,12 @@
 /**
  * Represents a single data point on the chart.
  */
-export interface ChartData {
+export interface LineChartProps {
     /**
      * Chart name
      */
-    name: string;
+    title: string;
+    subtitle?: string;
     data: {
         label: string;
         value: number;
@@ -13,7 +14,8 @@ export interface ChartData {
 }[]
 
 export interface ColumnChartProps {
-    name: string;
+    title: string;
+    subtitle?: string;
     data: {
         label: string;
         value: number;
@@ -21,7 +23,8 @@ export interface ColumnChartProps {
 }
 
 export interface BarChartProps {
-    name: string;
+    title: string;
+    subtitle?: string;
     data: {
         label: string;
         value: number;
@@ -29,7 +32,8 @@ export interface BarChartProps {
 }
 
 export interface LollipopChartProps {
-    name: string,
+    name: string;
+    subtitle?: string;
     data: {
         label: string,
         value: number
@@ -63,5 +67,13 @@ export interface PopulationChartProps {
         category: string;
         leftValue: number;
         rightValue: number;
+    }[];
+}
+
+export interface NightingaleChartProps {
+    title: string;
+    data: {
+        label: string;
+        value: number;
     }[];
 }

@@ -1,14 +1,15 @@
-import { View, PanResponder, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
-import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
+import { View ,StyleSheet } from 'react-native';
+import React from 'react';
+import { CHART_HEIGHT, CHART_WIDTH } from '../../utils/constants';
 import type { BarChartProps } from '../../interfaces/types';
-import Svg, { Circle, G, Line, Path, Text } from 'react-native-svg';
+import Svg, {  G, Path, Rect, Text } from 'react-native-svg';
 import { RADIAL_CHART_START_ANGLE, STROKE_WIDTH, RADIAL_CHART_INITIAL_RADIUS } from '../../utils/constants';
+import { getRandomVibrantColors } from '../../utils/functions';
 
-const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
+const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
     const chartWidth: number = CHART_WIDTH;
-    const chartHeight: number = CHART_HEIGHT;
-    const chartPadding: number = CHART_PADDING;
+    //const chartHeight: number = CHART_HEIGHT;
+    //const chartPadding: number = CHART_PADDING;
 
     type arcData = {
         name: string,
@@ -24,13 +25,12 @@ const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
     data.map((arcDetail, index) => {
         const radius = RADIAL_CHART_INITIAL_RADIUS + index * STROKE_WIDTH;
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
-        const endAngle = ((360 / maximumValue) * arcDetail.value) + RADIAL_CHART_START_ANGLE;
-
+        const endAngle = ((360 / maximumValue) * arcDetail.value) + RADIAL_CHART_START_ANGLE + 90;
         const sweepFlag = 1;
         const largeArcFlag = endAngle - RADIAL_CHART_START_ANGLE <= 180 ? "0" : "1";
-        const startX = CHART_WIDTH / 2 + radius * Math.cos(toRadians(RADIAL_CHART_START_ANGLE));
+        const startX = 50+ RADIAL_CHART_INITIAL_RADIUS + radius * Math.cos(toRadians(RADIAL_CHART_START_ANGLE));
         const startY = CHART_WIDTH / 2 + radius * Math.sin(toRadians(RADIAL_CHART_START_ANGLE));
-        const endX = CHART_WIDTH / 2 + radius * Math.cos(toRadians(endAngle));
+        const endX =  50+ RADIAL_CHART_INITIAL_RADIUS + radius * Math.cos(toRadians(endAngle));
         const endY = CHART_WIDTH / 2 + radius * Math.sin(toRadians(endAngle));
 
         const d = ` M ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
@@ -70,7 +70,8 @@ const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
     //     })
     // ).current;
 
-    const colorArray: string[] = ["#FF5733", "#33FF57", "#071b76ff", "#F333FF", "#4d0840ff", "#f71c27ff"];
+    const colorArray: string[] = getRandomVibrantColors(arcDetails.length)
+
     return (
         <View style={[
             StyleSheet.absoluteFill,
@@ -78,22 +79,53 @@ const CircularBarChart: React.FC<BarChartProps> = ({ name, data }) => {
         ]}>
             <View style={{ backgroundColor: 'white' }}>
                 <Svg height={CHART_HEIGHT} width={CHART_WIDTH}>
-                    <G transform="translate(0,60)">
+                    <G transform="translate(30,60)">
                         <Text
-                            x={chartWidth / 2}
+                            x={RADIAL_CHART_INITIAL_RADIUS}
                             y={30}
                             fontSize="18"
                             fontWeight="bold"
                             fill="black"
                             textAnchor="middle"
                         >
-                            {name}
+                            {title}
                         </Text>
                     </G>
-                    <G transform="translate(0,60)">
-                        {arcDetails.map((arcDetail, index) => (
-                            <Path key={Math.random()} d={arcDetail.path} stroke={colorArray[index]} strokeWidth={STROKE_WIDTH} fill="none" />
-                        ))}
+                    <G transform="translate(30,60)">
+                        <G transform="translate(0,0)">
+                            {arcDetails.map((arcDetail, index) => (
+                                <Path key={Math.random()} d={arcDetail.path} stroke={colorArray[index]} strokeWidth={STROKE_WIDTH} fill="none" />
+                            ))}
+                        </G>
+                        <G transform="translate(220,0)">
+                            {arcDetails.map((arcDetail, index) => (
+                                <React.Fragment key={index + "bar" + Date.now().toString()}>
+                                    <Rect
+                                        y={(25) * ((index%10) + 1)}
+                                        x={0+parseInt(((index/10)).toString())*80}
+                                        height={20}
+                                        width={50}
+                                        stroke={colorArray[index]}
+                                        strokeWidth="2"
+                                        fill={colorArray[index]}
+                                        rx={5}
+                                        ry={5}
+                                    ></Rect>
+                                    <Text 
+                                        y={(25) * ((index%10) + 1) +15} 
+                                        x={10+parseInt(((index/10)).toString())*80}
+                                        fontSize={12}
+                                        fontWeight={800}
+                                        fill={"white"}
+                                    >
+                                        {arcDetail.value}
+                                    </Text>
+                                </React.Fragment>
+                                
+
+                            ))}
+                        </G>
+                        
                     </G>
                 </Svg>
             </View>

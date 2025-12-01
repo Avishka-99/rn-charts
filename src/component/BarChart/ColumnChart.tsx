@@ -1,33 +1,11 @@
-import type { ColumnChartProps, DataPoint } from '../../interfaces/types';
-import { View, StyleSheet, PanResponder, Animated } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import Svg, {
-    Circle,
-    Ellipse,
-    G,
-    Text,
-    TSpan,
-    TextPath,
-    Path,
-    Polygon,
-    Polyline,
-    Line,
-    Rect,
-    Use,
-    Image,
-    Symbol,
-    Defs,
-    LinearGradient,
-    RadialGradient,
-    Stop,
-    ClipPath,
-    Pattern,
-    Mask,
-
-} from 'react-native-svg';
+import type { ColumnChartProps } from '../../interfaces/types';
+import { View, StyleSheet, PanResponder } from 'react-native';
+import React, {  useRef, useState } from 'react';
+import Svg, { G, Polyline,Rect, Text } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
+import { getRandomVibrantColors } from '../../utils/functions';
 
-const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
+const ColumnChart: React.FC<ColumnChartProps> = ({ title, data }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -39,6 +17,8 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
 
     const maxY: number = Math.max(...data.map(v => v.value));
     const xAxisLength: number = data.length * (BAR_WIDTH + 10) + 10;
+
+    const colors:string[] = getRandomVibrantColors(data.length);
 
 
     const panResponder = useRef(
@@ -55,7 +35,7 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
                 }
 
             },
-            onPanResponderRelease: (event, gestureState) => {
+            onPanResponderRelease: (_event, gestureState) => {
                 offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
                 offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
             },
@@ -64,8 +44,8 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
 
 
     let pointsArray: { label: string, value: number }[] = [];
-    data.map((v, i) => {
-        const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+    data.map((v, _i) => {
+        //const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         const y = ((chartHeight - chartPadding) - (v.value / maxY) * (chartHeight - 10 - chartPadding));
         pointsArray.push({ label: v.label, value: y });
     });
@@ -77,7 +57,19 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
             { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 500 500`} style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${0} ${0} 700 700`} style={{ backgroundColor: 'white' }}>
+                    <G transform="translate(100,10)">
+                        <Text
+                            x={chartWidth/2}
+                            y={30}
+                            fontSize="27"
+                            fontWeight="bold"
+                            fill="black"
+                            textAnchor="middle"
+                        >
+                            {title}
+                        </Text>
+                    </G>
                     <G transform="translate(0,100)">
                         <Polyline
                             key={"axis"}
@@ -95,9 +87,9 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ name, data }) => {
                                     y={points.value}
                                     width={BAR_WIDTH}
                                     height={points.value === (chartHeight - chartPadding) ? 0 : (chartHeight - chartPadding) - points.value}
-                                    stroke="red"
+                                    stroke={colors[index]}
                                     strokeWidth="2"
-                                    fill="yellow"
+                                    fill={colors[index]}
                                 />
                             )
                         })}

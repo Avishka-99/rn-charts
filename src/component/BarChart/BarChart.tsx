@@ -1,10 +1,10 @@
-import type { BarChartProps, DataPoint } from '../../interfaces/types';
-import { View, StyleSheet, PanResponder, Animated } from 'react-native';
+import type { BarChartProps } from '../../interfaces/types';
+import { View, StyleSheet, PanResponder } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Svg, { G, Text, Rect } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
 
-const BarChart: React.FC<BarChartProps> = ({ name, data }) => {
+const BarChart: React.FC<BarChartProps> = ({ title, data }) => {
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
@@ -15,7 +15,7 @@ const BarChart: React.FC<BarChartProps> = ({ name, data }) => {
     const offsetRefY = useRef(0);
 
     const maxY: number = Math.max(...data.map(v => v.value));
-    const xAxisLength: number = data.length * (BAR_WIDTH + 10) + 10;
+    //const xAxisLength: number = data.length * (BAR_WIDTH + 10) + 10;
 
 
     const panResponder = useRef(
@@ -32,7 +32,7 @@ const BarChart: React.FC<BarChartProps> = ({ name, data }) => {
                 }
 
             },
-            onPanResponderRelease: (event, gestureState) => {
+            onPanResponderRelease: (_event, gestureState) => {
                 offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
                 offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
             },
@@ -41,8 +41,8 @@ const BarChart: React.FC<BarChartProps> = ({ name, data }) => {
 
 
     let pointsArray: { label: string, value: number, exactValue: number }[] = [];
-    data.map((v, i) => {
-        const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+    data.map((v, _i) => {
+        //const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         const y = ((chartHeight - chartPadding) - (v.value / maxY) * (chartHeight - 10 - chartPadding));
         pointsArray.push({ label: v.label, value: y, exactValue: v.value });
     });
@@ -55,6 +55,19 @@ const BarChart: React.FC<BarChartProps> = ({ name, data }) => {
         ]}>
             <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
                 <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 500 500`} style={{ backgroundColor: 'white' }}>
+                    <G transform="translate(0,40)">
+                        <Text
+                            x={40}
+                            y={10}
+                            fontSize="18"
+                            fontWeight="bold"
+                            fill="black"
+                            textAnchor="middle"
+                        
+                        >
+                            {title}
+                        </Text>
+                    </G>
                     <G transform="translate(0,100)">
                         {/* <Polyline
                             key={"axis"}

@@ -5,4 +5,5 @@ export { default as SlopeChart } from './component/LineChart/SlopeChart';
 export { default as LollipopChart } from './component/OtherCharts/LollipopChart';
 export { default as CircularBarChart } from './component/BarChart/CircularBarChart';
 export { default as PopulationChart } from './component/OtherCharts/PopulationChart';
-export type { ChartData, ColumnChartProps, SlopeChartProps, BarChartProps, LollipopChartProps, PopulationChartProps } from './interfaces/types';
+export { default as NightingaleChart } from './component/OtherCharts/NightingaleChart';
+export type { LineChartProps, ColumnChartProps, SlopeChartProps, BarChartProps, LollipopChartProps, PopulationChartProps, NightingaleChartProps } from './interfaces/types';

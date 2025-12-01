@@ -4,7 +4,7 @@ import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants'
 import type { LollipopChartProps } from '../../interfaces/types';
 import Svg, { Circle, G, Line, Text } from 'react-native-svg';
 
-const LollipopChart: React.FC<LollipopChartProps> = ({ name, data }) => {
+const LollipopChart: React.FC<LollipopChartProps> = ({ data }) => {
   const chartWidth: number = CHART_WIDTH;
   const chartHeight: number = CHART_HEIGHT;
   const chartPadding: number = CHART_PADDING;
@@ -16,9 +16,8 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ name, data }) => {
   const offsetRefX = useRef(0);
   const offsetRefY = useRef(0);
   let pointsArray: { label: string, value: number, exactValue: number }[] = [];
-  data.map((v, i) => {
+  data.map((v, _i) => {
     const x = ((chartWidth) / maxY) * v.value;
-    console.log(x);
     pointsArray.push({ label: v.label, value: x, exactValue: v.value });
   });
 
@@ -36,7 +35,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ name, data }) => {
         }
 
       },
-      onPanResponderRelease: (event, gestureState) => {
+      onPanResponderRelease: (_event, gestureState) => {
         offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
         offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
       },

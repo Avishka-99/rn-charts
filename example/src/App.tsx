@@ -1,11 +1,12 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart, PopulationChart } from '@avi99/rn-charts';
-import type { BarChartProps, ChartData, ColumnChartProps, SlopeChartProps, LollipopChartProps, PopulationChartProps } from '@avi99/rn-charts';
+import React from 'react';
+//import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart, PopulationChart } from '@avi99/rn-charts';
+import { type BarChartProps, type LineChartProps, type ColumnChartProps, type SlopeChartProps, type LollipopChartProps, type PopulationChartProps, NightingaleChart, type NightingaleChartProps, PopulationChart, LineChart, BarChart, CircularBarChart, ColumnChart } from '@avi99/rn-charts';
 
 
 export default function App() {
-  const data_2: ChartData = {
-    name: "Sales",
+  const data_2: LineChartProps = {
+    title: "Sales",
     data: [[
       { label: '1', value: 0 },
       { label: '2', value: 10 },
@@ -24,7 +25,7 @@ export default function App() {
       { label: '3', value: 53 },
       { label: '4', value: 30 },
       { label: '5', value: 40 },
-      { label: '6', value: 60 },
+      { label: '6', value: -480 },
       { label: '7', value: 23 },
       { label: '8', value: 90 },
       { label: '9', value: 243 },
@@ -32,19 +33,24 @@ export default function App() {
       { label: '11', value: 43 }]],
   };
   const data: BarChartProps = {
-    name: "Sales",
+    title: "Sales",
     data: [
       { label: '1', value: 90 },
       { label: '2', value: 10 },
-      { label: '3', value: 40 },
-      { label: '4', value: 30 },
-      { label: '5', value: 40 },
-      // { label: '6', value: 60 },
-      // { label: '7', value: 100 },
-      // { label: '8', value: 98 },
-      // { label: '9', value: 130 },
-      // { label: '10', value: 13 },
-      // { label: '11', value: 160 }
+      { label: '3', value: 440 },
+      { label: '4', value: 399 },
+      { label: '5', value: 500 },
+      { label: '6', value: 60 },
+      { label: '7', value: 100 },
+      { label: '8', value: 98 },
+      { label: '9', value: 130 },
+      { label: '10', value: 13 },
+      { label: '11', value: 160 },
+      { label: '12', value: 100 },
+      { label: '13', value: 98 },
+      { label: '14', value: 130 },
+      { label: '15', value: 13 },
+      { label: '16', value: 160 }
     ],
   };
 
@@ -84,7 +90,7 @@ export default function App() {
     data: [
       { category: "0-9", leftValue: 4200, rightValue: 4000 },
       { category: "10-19", leftValue: 3900, rightValue: 4100 },
-      { category: "20-29", leftValue: 4500, rightValue: 4700 },
+      { category: "20-29", leftValue: 4500, rightValue: 4500 },
       { category: "30-39", leftValue: 4300, rightValue: 4400 },
       { category: "40-49", leftValue: 3800, rightValue: 4000 },
       { category: "50-59", leftValue: 3100, rightValue: 3300 },
@@ -94,12 +100,31 @@ export default function App() {
     ],
   };
 
+  const night: NightingaleChartProps = {
+    title: "Year end sales report Sales - 2025/11/23",
+    data: [
+      { label: '1', value: 123 },
+      { label: '2', value: 34 },
+      { label: '3', value: 57 },
+      { label: '4', value: 34 },
+      { label: '5', value: 34 },
+      { label: '6', value: 67 },
+      { label: '7', value: 86 },
+      { label: '8', value: 23 },
+      { label: '9', value: 57 },
+      { label: '10', value: 78 },
+      { label: '11', value: 34 },
+      { label: '12', value: 200 }
+    ],
+  };
+
 
 
   return (
     <View style={styles.container}>
       {/* <LineChart {...data} /> */}
-      <PopulationChart {...samplePopulationData} />
+      {/* <NightingaleChart {...night} /> */}
+      <NightingaleChart {...night} />
     </View>
   );
 }

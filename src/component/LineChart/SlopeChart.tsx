@@ -1,31 +1,7 @@
-import { View, StyleSheet, PanResponder, Animated } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import Svg, {
-    Circle,
-    Ellipse,
-    G,
-    Text,
-    TSpan,
-    TextPath,
-    Path,
-    Polygon,
-    Polyline,
-    Line,
-    Rect,
-    Use,
-    Image,
-    Symbol,
-    Defs,
-    LinearGradient,
-    RadialGradient,
-    Stop,
-    ClipPath,
-    Pattern,
-    Mask,
-
-} from 'react-native-svg';
-import type { ChartData, SlopeChartProps, DataPoint } from '../../interfaces/types';
-import { Colors } from '../../utils/enums';
+import { View, StyleSheet, PanResponder } from 'react-native';
+import React, { useRef, useState } from 'react';
+import Svg, { Circle, G, Text, Line } from 'react-native-svg';
+import type { SlopeChartProps, DataPoint } from '../../interfaces/types';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 
 const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => {
@@ -37,7 +13,7 @@ const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => 
     const [offsetY, setOffsetY] = useState(0);
     const offsetRefX = useRef(0);
     const offsetRefY = useRef(0);
-    const pan = useRef(new Animated.ValueXY()).current;
+    //const pan = useRef(new Animated.ValueXY()).current;
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -52,7 +28,7 @@ const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => 
                 }
 
             },
-            onPanResponderRelease: (event, gestureState) => {
+            onPanResponderRelease: (_event, gestureState) => {
                 offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
                 offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
             },
@@ -65,8 +41,8 @@ const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => 
     const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
     let pointsArray: string[] = [];
     let yAxixValues: number[] = [];
-    values.map((chartValues, i) => {
-        const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+    values.map((chartValues, _i) => {
+        //const x = (i / (values.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         let points: string = "";
         if (Math.abs(minY) > maxY) {
             const y = ((chartHeight - chartPadding) - (chartValues.y1 / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
@@ -101,7 +77,6 @@ const SlopeChart: React.FC<SlopeChartProps> = ({ label_1, label_2, values }) => 
         }
     });
 
-    console.log(pointsArray)
 
     return (
         <View style={[
