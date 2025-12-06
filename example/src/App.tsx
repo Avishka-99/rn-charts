@@ -1,73 +1,84 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
 //import { LineChart, BarChart, SlopeChart, LollipopChart, CircularBarChart, PopulationChart } from '@avi99/rn-charts';
-import { type BarChartProps, type LineChartProps, type ColumnChartProps, type SlopeChartProps, type LollipopChartProps, type PopulationChartProps, NightingaleChart, type NightingaleChartProps, PopulationChart, LineChart, BarChart, CircularBarChart, ColumnChart } from '@avi99/rn-charts';
+import { type BarChartProps, type LineChartProps, type ColumnChartProps, type SlopeChartProps, type LollipopChartProps, type PopulationChartProps, NightingaleChart, type PieChartProps, PopulationChart, LineChart, BarChart, CircularBarChart, ColumnChart, SlopeChart, LollipopChart,PieChart } from '@avi99/rn-charts';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function App() {
   const data_2: LineChartProps = {
     title: "Sales",
-    data: [[
-      { label: '1', value: 0 },
-      { label: '2', value: 10 },
-      { label: '3', value: 40 },
-      { label: '4', value: 30 },
-      { label: '5', value: -40 },
-      { label: '6', value: 60 },
-      { label: '7', value: 100 },
-      { label: '8', value: 98 },
-      { label: '9', value: 130 },
-      { label: '10', value: 13 },
-      { label: '11', value: 160 }],
+    data : [
     [
-      { label: '1', value: 50 },
-      { label: '2', value: 23 },
-      { label: '3', value: 53 },
-      { label: '4', value: 30 },
-      { label: '5', value: 40 },
-      { label: '6', value: -480 },
-      { label: '7', value: 23 },
-      { label: '8', value: 90 },
-      { label: '9', value: 243 },
-      { label: '10', value: 13 },
-      { label: '11', value: 43 }]],
+      { label: 'January', value: 0 },
+      { label: 'February', value: 10 },
+      { label: 'March', value: 40 },
+      { label: 'April', value: 30 },
+      { label: 'May', value: -40 },
+      { label: 'June', value: 60 },
+      { label: 'July', value: 100 },
+      { label: 'August', value: 98 },
+      { label: 'September', value: 130 },
+      { label: 'October', value: 13 },
+      { label: 'November', value: 160 },
+      { label: 'December', value: 160 }
+    ],
+    [
+      { label: 'January', value: 50 },
+      { label: 'February', value: 23 },
+      { label: 'March', value: 53 },
+      { label: 'April', value: 30 },
+      { label: 'May', value: 40 },
+      { label: 'June', value: -180 },
+      { label: 'July', value: 23 },
+      { label: 'August', value: 90 },
+      { label: 'September', value: 243 },
+      { label: 'October', value: 13 },
+      { label: 'November', value: 43 },
+      { label: 'December', value: 160 }
+    ]
+  ]
+
   };
   const data: BarChartProps = {
     title: "Sales",
     data: [
-      { label: '1', value: 90 },
-      { label: '2', value: 10 },
-      { label: '3', value: 440 },
-      { label: '4', value: 399 },
-      { label: '5', value: 500 },
-      { label: '6', value: 60 },
-      { label: '7', value: 100 },
-      { label: '8', value: 98 },
-      { label: '9', value: 130 },
-      { label: '10', value: 13 },
-      { label: '11', value: 160 },
-      { label: '12', value: 100 },
-      { label: '13', value: 98 },
-      { label: '14', value: 130 },
-      { label: '15', value: 13 },
-      { label: '16', value: 160 }
+      { label: 'Kandy', value: 147 },
+      { label: 'Galle', value: 346 },
+      { label: 'Colombo', value: 440 },
+      { label: 'Matara', value: 399 },
+      { label: 'Hambantota', value: 500 },
+      { label: 'Nuwara Eliya', value: 60 },
+      { label: 'Anuradhapura', value: 100 },
+      { label: 'Jaffna', value: 98 },
+      { label: 'Trincomalee', value: 600 },
+      { label: 'Batticaloa', value: 253 },
+      { label: 'Polonnaruwa', value: 160 },
+      { label: 'Vavuniya', value: 100 },
+      { label: 'Mannar', value: 98 },
+      { label: 'Mulathivu', value: 130 },
+      { label: 'Kilinochchi', value: 245 },
+      { label: 'Ampara', value: 160 }
     ],
   };
 
   const slopeChartData: SlopeChartProps = {
+    title: "Sales Comparison",
     label_1: "2020 Sales",
     label_2: "2024 Sales",
     values: [
-      { y1: 120, y2: 180 }, // Product A
-      { y1: 200, y2: 150 }, // Product B
-      { y1: 80, y2: 130 }, // Product C
-      { y1: 160, y2: 190 }, // Product D
-      { y1: 100, y2: 90 },  // Product E
+      {
+        y1: 120, y2: 180, label: 'Product A' },
+      { y1: 200, y2: 150, label: 'Product B' },
+      { y1: 80, y2: 130, label: 'Product C' }, 
+      { y1: 160, y2: 190, label: 'Product D' }, 
+      { y1: 100, y2: 90, label: 'Product E' }, 
     ],
   };
 
   const lollipopChartData: LollipopChartProps = {
     name: "Monthly Sales",
+    subtitle: "January to December",
     data: [
       { label: "January", value: 30 },
       { label: "February", value: 10 },
@@ -80,6 +91,11 @@ export default function App() {
       { label: "September", value: 65 },
       { label: "October", value: 13 },
       { label: "November", value: 58 },
+      { label: "September", value: 65 },
+      { label: "October", value: 13 },
+      { label: "November", value: 58 },
+      { label: "September", value: 65 },
+      { label: "October", value: 13 },
     ],
   };
 
@@ -100,40 +116,50 @@ export default function App() {
     ],
   };
 
-  const night: NightingaleChartProps = {
+  const night: PieChartProps = {
     title: "Year end sales report Sales - 2025/11/23",
     data: [
-      { label: '1', value: 123 },
-      { label: '2', value: 34 },
-      { label: '3', value: 57 },
-      { label: '4', value: 34 },
-      { label: '5', value: 34 },
-      { label: '6', value: 67 },
-      { label: '7', value: 86 },
-      { label: '8', value: 23 },
-      { label: '9', value: 57 },
-      { label: '10', value: 78 },
-      { label: '11', value: 34 },
-      { label: '12', value: 200 }
+      { label: 'January', value: 123 },
+      { label: 'February', value: 34 },
+      { label: 'March', value: 57 },
+      { label: 'April', value: 200 },
+      { label: 'May', value: 34 },
+      { label: 'June', value: 67 },
+      { label: 'July', value: 86 },
+      { label: 'August', value: 200 },
+      { label: 'September', value: 57 },
+      { label: 'October', value: 78 },
+      { label: 'November', value: 34 },
+      { label: 'December', value: 200 }
     ],
   };
 
 
 
   return (
-    <View style={styles.container}>
-      {/* <LineChart {...data} /> */}
-      {/* <NightingaleChart {...night} /> */}
-      <NightingaleChart {...night} />
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} style={styles.container}>
+            {/* <LineChart {...data} /> */}
+            {/* <NightingaleChart {...night} /> */}
+            <NightingaleChart {...night} /> 
+            <BarChart {...data} />
+            <PopulationChart {...samplePopulationData} />
+            <CircularBarChart {...data} />
+            <ColumnChart {...data} /> 
+            <SlopeChart {...slopeChartData} />
+            <LollipopChart {...lollipopChartData} />
+            <LineChart {...data_2} />
+            <PieChart {...night} /> 
+            
+      </ScrollView>
+    </SafeAreaView>
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: 'white',
   },
 });

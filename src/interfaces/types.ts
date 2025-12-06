@@ -47,14 +47,17 @@ export interface DataPoint {
         x: string;
         y: number;
         label?: string;
+        exactValue?: number;
     };
 }
 export interface SlopeChartProps {
+    title: string;
     label_1: string,
     label_2: string,
     values: {
         y1: number,
         y2: number,
+        label: string
     }[],
 
 }
@@ -70,7 +73,7 @@ export interface PopulationChartProps {
     }[];
 }
 
-export interface NightingaleChartProps {
+export interface PieChartProps {
     title: string;
     data: {
         label: string;

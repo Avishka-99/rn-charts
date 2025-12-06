@@ -1,10 +1,16 @@
-import { View, PanResponder, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { View } from 'react-native';
+import React from 'react';
 import { CHART_HEIGHT, CHART_WIDTH, BAR_WIDTH } from '../../utils/constants';
 import type { PopulationChartProps } from '../../interfaces/types';
 import Svg, {  G,  Rect, Text } from 'react-native-svg';
 
 const PopulationChart: React.FC<PopulationChartProps> = ({ chartTitle,leftLabel, rightLabel, data }) => {
+    if(data.length===0){
+        throw new Error("Data array cannot be empty");
+    }
+    if(data.length>9){
+        throw new Error("Population chart currently supports a maximum of 9 items");
+    }
     const chartWidth: number = CHART_WIDTH;
     const chartHeight: number = CHART_HEIGHT;
     type populationData = {
@@ -18,11 +24,6 @@ const PopulationChart: React.FC<PopulationChartProps> = ({ chartTitle,leftLabel,
     const chartData: populationData = [];
     const max: number = Math.max(...data.map(v => Math.max(v.leftValue, v.rightValue)));
 
-    const [offsetX, setOffsetX] = useState(0);
-    const [offsetY, setOffsetY] = useState(0);
-    const offsetRefX = useRef(0);
-    const offsetRefY = useRef(0);
-    //let pointsArray: { label: string, value: number, exactValue: number }[] = [];
     data.map((v, _i) => {
         chartData.push({
             category: v.category,
@@ -32,34 +33,13 @@ const PopulationChart: React.FC<PopulationChartProps> = ({ chartTitle,leftLabel,
             rightValue: v.rightValue
         })
     });
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderMove: (event, gestureState) => {
-                if (event.nativeEvent.touches.length >= 2) {
-                } else {
-                    const newOffsetX = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-                    const newOffsetY = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-                    setOffsetX(newOffsetX);
-                    setOffsetY(newOffsetY);
-                }
-
-            },
-            onPanResponderRelease: (_event, gestureState) => {
-                offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-                offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-            },
-        })
-    ).current;
 
     const colorArray: string[] = ["#FF5733", "#33FF57", "#071b76ff", "#F333FF", "#4d0840ff", "#f71c27ff"];
     return (
         <View style={[
-            StyleSheet.absoluteFill,
             { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
         ]}>
-            <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
+            <View style={{ backgroundColor: 'red' }}>
                 <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${0} ${0} 400 400`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,20)">
                         <View style={{width: chartWidth}}>

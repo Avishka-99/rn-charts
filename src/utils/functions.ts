@@ -14,7 +14,7 @@ export function getRandomVibrantColors(count: number): string[] {
     colors.push(hslToHex(hue % 360, saturation, lightness));
   }
 
-  return colors;
+  return colors.sort(() => Math.random() - 0.5);
 }
 
 /**
@@ -30,3 +30,33 @@ function hslToHex(h: number, s: number, l: number): string {
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
+
+export function getDarkColors(count: number): string[] {
+   const colors: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const hue = Math.floor((360 / count) * i);
+    const saturation = 70;                      
+    const lightness = 20;                    
+
+    colors.push(hslToHex(hue, saturation, lightness));
+  }
+
+  return colors.sort(() => Math.random() - 0.5);
+}
+
+export function generateLightColors(count: number): string[] {
+  const colors: string[] = [];
+  const step = Math.floor(360 / count);
+
+  for (let i = 0; i < count; i++) {
+    const hue = i * step;
+    const saturation = 70 + Math.random() * 20; 
+    const lightness = 40 + Math.random() * 20; 
+
+    colors.push(hslToHex(hue, saturation, lightness));
+  }
+
+  return colors.sort(() => Math.random() - 0.5);
+}
+

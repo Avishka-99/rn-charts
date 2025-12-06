@@ -1,44 +1,44 @@
-import { View, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import { View } from 'react-native';
+import React from 'react';
 import { NIGHTINGALE_CHART_WIDTH, NIGHTINGALE_CHART_HEIGHT } from '../../utils/constants';
-import type { NightingaleChartProps } from '../../interfaces/types';
-import Svg, { Circle, G, Path,Rect,Text } from 'react-native-svg';
-import { getRandomVibrantColors } from '../../utils/functions';
+import type { PieChartProps } from '../../interfaces/types';
+import Svg, { G, Path,Rect,Text } from 'react-native-svg';
+import { generateLightColors } from '../../utils/functions';
 
-const NightingaleChart: React.FC<NightingaleChartProps> = ({ title, data }) => {
+const NightingaleChart: React.FC<PieChartProps> = ({ title, data }) => {
     type chartData = {
         label: string,
         path: string,
         value: number,
     }[]
+    type chartData_2 = {
+        label: string,
+        value: number,
+        labelX: number,
+        labelY: number,
+        rotateAngle?: number,
+    }[]
 
     const chartData: chartData = [];
+    const chartData_2: chartData_2 = [];
     const max: number = Math.max(...data.map(v => v.value));
     const sliceAngle: number = (2 * Math.PI) / data.length;
     const center = NIGHTINGALE_CHART_WIDTH / 5;
-    //const maxRadius = center - 10;s
-
-    const [offsetX, _setOffsetX] = useState(0);
-    const [offsetY, _setOffsetY] = useState(0);
-    // const offsetRefX = useRef(0);
-    // const offsetRefY = useRef(0);
-    // let pointsArray: { label: string, value: number, exactValue: number }[] = [];
 
     data.map((v, i) => {
         const radius: number = (NIGHTINGALE_CHART_HEIGHT / 5) / max * v.value;
-        //const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const startAngle: number = i * sliceAngle;
         const endAngle: number = (i + 1) * sliceAngle;
 
-        const x1 = center + radius * Math.cos(startAngle);
+        const x1 = center + radius * Math.cos(startAngle)+60;
         const y1 = center + radius * Math.sin(startAngle);
-        const x2 = center + radius * Math.cos(endAngle);
+        const x2 = center + radius * Math.cos(endAngle)+60;
         const y2 = center + radius * Math.sin(endAngle);
 
         const largeArcFlag = 0; 
 
         const pathData = `
-        M ${center} ${center}
+        M ${center+60} ${center}
         L ${x1} ${y1}
         A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}
         Z
@@ -46,14 +46,14 @@ const NightingaleChart: React.FC<NightingaleChartProps> = ({ title, data }) => {
         chartData.push({ label: v.label, path: pathData, value: v.value });
     })
 
-    const colorArray: string[] = getRandomVibrantColors(data.length);
+    const colorArray: string[] = generateLightColors(data.length);
     return (
         <View style={[
-            StyleSheet.absoluteFill,
+           
             { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
         ]}>
             <View style={{ backgroundColor: 'red' }}>
-                <Svg key={1000} height={NIGHTINGALE_CHART_HEIGHT} width={NIGHTINGALE_CHART_WIDTH} viewBox={`${0} ${0} 300 300`} style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={600} width={NIGHTINGALE_CHART_WIDTH} viewBox={`${0} ${0} 300 300`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,0)">
                         <Text
                             x={0}
@@ -75,17 +75,15 @@ const NightingaleChart: React.FC<NightingaleChartProps> = ({ title, data }) => {
 
                             </React.Fragment>
                         ))}
-                        
-                        
                     </G>
-                    <G transform={`translate(${180},20)`}>
+                    <G transform={`translate(${10},200)`}>
                         {chartData.map((arcDetail, index) => (
                             <React.Fragment key={index + "bar" + Date.now().toString()}>
                                 <Rect
-                                    y={(25) * ((index%8) + 1)}
-                                    x={0+parseInt(((index/8)).toString())*60}
-                                    height={15}
-                                    width={50}
+                                    y={(25) * ((index%6) + 1)}
+                                    x={0+parseInt(((index/6)).toString())*150}
+                                    height={5}
+                                    width={5}
                                     stroke={colorArray[index]}
                                     strokeWidth="2"
                                     fill={colorArray[index]}
@@ -93,13 +91,14 @@ const NightingaleChart: React.FC<NightingaleChartProps> = ({ title, data }) => {
                                     ry={5}
                                 ></Rect>
                                 <Text 
-                                    y={(25) * ((index%8) + 1) +11} 
-                                    x={10+parseInt(((index/8)).toString())*60}
+                                    y={(25) * ((index%6) + 1) +6} 
+                                    x={10+parseInt(((index/6)).toString())*150}
                                     fontSize={10}
                                     fontWeight={800}
-                                    fill={"white"}
+                                    fill={"black"}
+                                    textAnchor='start'
                                 >
-                                    {arcDetail.value}
+                                    {arcDetail.label}({arcDetail.value})
                                 </Text>
                             </React.Fragment>
                         ))}

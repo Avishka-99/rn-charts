@@ -1,55 +1,37 @@
-import { View, PanResponder, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { View } from 'react-native';
+import React from 'react';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
 import type { LollipopChartProps } from '../../interfaces/types';
 import Svg, { Circle, G, Line, Text } from 'react-native-svg';
 
-const LollipopChart: React.FC<LollipopChartProps> = ({ data }) => {
+const LollipopChart: React.FC<LollipopChartProps> = ({ name, subtitle, data }) => {
   const chartWidth: number = CHART_WIDTH;
   const chartHeight: number = CHART_HEIGHT;
   const chartPadding: number = CHART_PADDING;
 
+  if(data.length===0){
+        throw new Error("Data array cannot be empty");
+    }
+    if(data.length>16){
+        throw new Error("Lolipop chart currently supports a maximum of 16 items");
+    }
+
   const maxY: number = Math.max(...data.map(v => v.value));
 
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
-  const offsetRefX = useRef(0);
-  const offsetRefY = useRef(0);
   let pointsArray: { label: string, value: number, exactValue: number }[] = [];
   data.map((v, _i) => {
-    const x = ((chartWidth) / maxY) * v.value;
+    const x = ((chartWidth-100) / maxY) * v.value;
     pointsArray.push({ label: v.label, value: x, exactValue: v.value });
   });
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gestureState) => {
-        if (event.nativeEvent.touches.length >= 2) {
-        } else {
-          const newOffsetX = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-          const newOffsetY = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-          setOffsetX(newOffsetX);
-          setOffsetY(newOffsetY);
-        }
-
-      },
-      onPanResponderRelease: (_event, gestureState) => {
-        offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-        offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-      },
-    })
-  ).current;
 
   const colorArray: string[] = ["#FF5733", "#33FF57", "#071b76ff", "#F333FF", "#4d0840ff", "#f71c27ff"];
   return (
     <View style={[
-      StyleSheet.absoluteFill,
       { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
     ]}>
-      <View {...panResponder.panHandlers} style={{ backgroundColor: 'red' }}>
-        <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${offsetX} ${offsetY} 450 450`} style={{ backgroundColor: 'white' }}>
+      <View style={{ backgroundColor: 'red' }}>
+        <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`0 0 450 450`} style={{ backgroundColor: 'white' }}>
           <G transform="translate(0,60)">
             <Text
               x={chartWidth / 2}
@@ -59,10 +41,20 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ data }) => {
               fill="black"
               textAnchor="middle"
             >
-              Monthly Sales Report
+              {name}
+            </Text>
+            <Text
+              x={chartWidth / 2}
+              y={50}
+              fontSize="15"
+              fontWeight="bold"
+              fill="black"
+              textAnchor="middle"
+            >
+              {subtitle}
             </Text>
           </G>
-          <G transform="translate(0,100)">
+          <G transform="translate(0,120)">
             <React.Fragment>
               {pointsArray.map((points, index) => {
                 return (
@@ -88,6 +80,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ data }) => {
                       x={points.value + chartPadding + 10}
                       y={(index + 1) * 20 + 4}
                       textAnchor='start'
+                      fontWeight={600}
                     >
                       {points.label}{`(${points.exactValue})`}
                     </Text>

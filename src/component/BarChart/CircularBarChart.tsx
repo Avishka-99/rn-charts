@@ -1,15 +1,19 @@
-import { View ,StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import React from 'react';
 import { CHART_HEIGHT, CHART_WIDTH } from '../../utils/constants';
 import type { BarChartProps } from '../../interfaces/types';
 import Svg, {  G, Path, Rect, Text } from 'react-native-svg';
-import { RADIAL_CHART_START_ANGLE, STROKE_WIDTH, RADIAL_CHART_INITIAL_RADIUS } from '../../utils/constants';
+import { RADIAL_CHART_START_ANGLE, STROKE_WIDTH, RADIAL_CHART_INITIAL_RADIUS, CHART_TITLE_FONT_SIZE } from '../../utils/constants';
 import { getRandomVibrantColors } from '../../utils/functions';
 
 const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
-    const chartWidth: number = CHART_WIDTH;
-    //const chartHeight: number = CHART_HEIGHT;
-    //const chartPadding: number = CHART_PADDING;
+
+    if(data.length===0){
+        throw new Error("Data array cannot be empty");
+    }
+    if(data.length>16){
+        throw new Error("CircularBarChart currently supports a maximum of 16 items");
+    }
 
     type arcData = {
         name: string,
@@ -33,57 +37,24 @@ const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
         const endX =  50+ RADIAL_CHART_INITIAL_RADIUS + radius * Math.cos(toRadians(endAngle));
         const endY = CHART_WIDTH / 2 + radius * Math.sin(toRadians(endAngle));
 
-        const d = ` M ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
+        const d = ` M ${startX } ${startY} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
         arcDetails.push({ name: arcDetail.label, path: d, value: arcDetail.value })
 
     })
-
-    // const [offsetX, setOffsetX] = useState(0);
-    // const [offsetY, setOffsetY] = useState(0);
-    // const offsetRefX = useRef(0);
-    // const offsetRefY = useRef(0);
-    // let pointsArray: { label: string, value: number, exactValue: number }[] = [];
-    // data.map((v, i) => {
-    //     const x = ((chartWidth) / maxY) * v.value;
-    //     console.log(x);
-    //     pointsArray.push({ label: v.label, value: x, exactValue: v.value });
-    // });
-
-    // const panResponder = useRef(
-    //     PanResponder.create({
-    //         onStartShouldSetPanResponder: () => true,
-    //         onMoveShouldSetPanResponder: () => true,
-    //         onPanResponderMove: (event, gestureState) => {
-    //             if (event.nativeEvent.touches.length >= 2) {
-    //             } else {
-    //                 const newOffsetX = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-    //                 const newOffsetY = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-    //                 setOffsetX(newOffsetX);
-    //                 setOffsetY(newOffsetY);
-    //             }
-
-    //         },
-    //         onPanResponderRelease: (event, gestureState) => {
-    //             offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-    //             offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-    //         },
-    //     })
-    // ).current;
 
     const colorArray: string[] = getRandomVibrantColors(arcDetails.length)
 
     return (
         <View style={[
-            StyleSheet.absoluteFill,
             { alignItems: 'center', justifyContent: 'center', backgroundColor: 'lightgrey' },
         ]}>
             <View style={{ backgroundColor: 'white' }}>
-                <Svg height={CHART_HEIGHT} width={CHART_WIDTH}>
-                    <G transform="translate(30,60)">
+                <Svg height={550} width={CHART_WIDTH}>
+                    <G transform="translate(30,30)">
                         <Text
                             x={RADIAL_CHART_INITIAL_RADIUS}
                             y={30}
-                            fontSize="18"
+                            fontSize={CHART_TITLE_FONT_SIZE}
                             fontWeight="bold"
                             fill="black"
                             textAnchor="middle"
@@ -91,20 +62,20 @@ const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
                             {title}
                         </Text>
                     </G>
-                    <G transform="translate(30,60)">
-                        <G transform="translate(0,0)">
+                    <G transform="translate(30,0)">
+                        <G transform="translate(70,0)">
                             {arcDetails.map((arcDetail, index) => (
                                 <Path key={Math.random()} d={arcDetail.path} stroke={colorArray[index]} strokeWidth={STROKE_WIDTH} fill="none" />
                             ))}
                         </G>
-                        <G transform="translate(220,0)">
+                        <G transform={`translate(${0},300)`}>
                             {arcDetails.map((arcDetail, index) => (
                                 <React.Fragment key={index + "bar" + Date.now().toString()}>
                                     <Rect
-                                        y={(25) * ((index%10) + 1)}
-                                        x={0+parseInt(((index/10)).toString())*80}
-                                        height={20}
-                                        width={50}
+                                        y={(25) * ((index%8) + 1)}
+                                        x={0+parseInt(((index/8)).toString())*190}
+                                        height={5}
+                                        width={5}
                                         stroke={colorArray[index]}
                                         strokeWidth="2"
                                         fill={colorArray[index]}
@@ -112,20 +83,18 @@ const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
                                         ry={5}
                                     ></Rect>
                                     <Text 
-                                        y={(25) * ((index%10) + 1) +15} 
-                                        x={10+parseInt(((index/10)).toString())*80}
-                                        fontSize={12}
+                                        y={(25) * ((index%8) + 1) +6} 
+                                        x={10+parseInt(((index/8)).toString())*190}
+                                        fontSize={10}
                                         fontWeight={800}
-                                        fill={"white"}
+                                        fill={"black"}
+                                        textAnchor='start'
                                     >
-                                        {arcDetail.value}
+                                        {arcDetail.name}({arcDetail.value})
                                     </Text>
                                 </React.Fragment>
-                                
-
                             ))}
-                        </G>
-                        
+                        </G>   
                     </G>
                 </Svg>
             </View>

@@ -1,5 +1,5 @@
-import { View, StyleSheet, PanResponder, type NativeTouchEvent } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { View } from 'react-native';
+import React from 'react';
 import Svg, { Circle, G, Text, Polyline, Line } from 'react-native-svg';
 import type { LineChartProps, DataPoint } from '../../interfaces/types';
 import { Colors } from '../../utils/enums';
@@ -7,116 +7,25 @@ import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants'
 
 const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
 
-    type negativeArray = {
-        value:number,
-        index:number
-    }
-
-
-    const chartWidth: number = CHART_WIDTH;
+    const chartWidth: number = 480;
     const chartHeight: number = CHART_HEIGHT;
     const chartPadding: number = CHART_PADDING;
 
-    const [offsetX, setOffsetX] = useState(0);
-    const [offsetY, setOffsetY] = useState(0);
-    const [scale, setScale] = useState(1);
-    const scaleRef = useRef(1); 
-    const initialDistance = useRef(0);
-    const initialScale = useRef(1);
-    const offsetRefX = useRef(0);
-    const offsetRefY = useRef(0);
-    const startRefX = useRef(0);
-    const startRefY = useRef(0);
-    const lastTouchCount = useRef(0);
+    type LabelPoints = {
+        label:string,
+        x:number
 
-
-    function getDistance(touches: readonly NativeTouchEvent[]) {
-        const [a, b] = touches;
-        const dx = a!.pageX - b!.pageX;
-        const dy = a!.pageY - b!.pageY;
-        return Math.sqrt(dx * dx + dy * dy);
     }
 
-    //const pan = useRef(new Animated.ValueXY()).current;
-    // const panResponder = useRef(
-    //     PanResponder.create({
-    //         onStartShouldSetPanResponder: () => true,
-    //         onMoveShouldSetPanResponder: () => true,
-    //         onPanResponderMove: (event, gestureState) => {
-    //             if (event.nativeEvent.touches.length >= 2) {
-    //             } else {
-    //                 const newOffsetX = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-    //                 const newOffsetY = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-    //                 setOffsetX(newOffsetX);
-    //                 setOffsetY(newOffsetY);
-    //             }
+    const labelArray:LabelPoints[] =[];
 
-    //         },
-    //         onPanResponderRelease: (_event, gestureState) => {
-    //             offsetRefX.current = Math.max(0, Math.min(chartWidth, offsetRefX.current - gestureState.dx));
-    //             offsetRefY.current = Math.max(0, Math.min(chartHeight, offsetRefY.current - gestureState.dy));
-    //         },
-    //     })
-    // ).current;
-
-const panResponder = useRef(
-  PanResponder.create({
-
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-
-    onPanResponderGrant: (e) => {
-      const touches = e.nativeEvent.touches.length;
-
-      // Touch count changed → reset pan baseline
-      if (touches !== lastTouchCount.current) {
-        startRefX.current = offsetRefX.current;
-        startRefY.current = offsetRefY.current;
-        initialScale.current = scaleRef.current;
-      }
-
-      if (touches === 2) {
-        initialDistance.current = getDistance(e.nativeEvent.touches);
-      }
-
-      lastTouchCount.current = touches;
-    },
-
-    onPanResponderMove: (e, gestureState) => {
-      const touches = e.nativeEvent.touches.length;
-
-      // ----- PINCH TO ZOOM -----
-      if (touches === 2) {
-        const dist = getDistance(e.nativeEvent.touches);
-        let newScale = (dist / initialDistance.current) * initialScale.current;
-
-        newScale = Math.max(0.5, Math.min(3, newScale)); // clamp
-
-        setScale(newScale);
-        scaleRef.current = newScale;
-
-        return; // don't pan
-      }
-
-      // ----- PAN (Only when single finger) -----
-      if (touches === 1) {
-        const newX = startRefX.current - gestureState.dx;
-        const newY = startRefY.current - gestureState.dy;
-
-        setOffsetX(Math.max(0, Math.min(600, newX)));
-        setOffsetY(Math.max(0, Math.min(600, newY)));
-      }
-    },
-
-    onPanResponderRelease: () => {
-      offsetRefX.current = offsetX;
-      offsetRefY.current = offsetY;
-      lastTouchCount.current = 0;
-    }
-  })
-).current;
-
-
+    data[0]?.map((line,_index)=>{
+        const x = (_index / (data[0]!.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+        labelArray.push({
+            label:line.label,
+            x:x
+        });
+    })
 
 
     const maxY = Math.max(...data.flat().map(v => v.value));
@@ -124,7 +33,7 @@ const panResponder = useRef(
     const chartDataPoints: DataPoint[][] = [];
     const yAxisPoints: DataPoint[] = [];
 
-    const colorArray: string[] = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#33FFF5", "#F5FF33"];
+    const colorArray: string[] = ["#FF5733", "#33FF57"];
 
     let pointsArray: string[] = [];
     data.map(chartValues => {
@@ -153,68 +62,40 @@ const panResponder = useRef(
 
     });
 
-    let negativeNumbers:negativeArray[] = [];
     for (let i: number = 0; i < 5; i++) {
-        
         if (Math.abs(minY) >= maxY) {
             const yAxisPoint: DataPoint = {
                 values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(minY)).toFixed(0)) }
             };
             yAxisPoints.push(yAxisPoint);
 
-            if(minY<0){
-                const yAxisPointNeg: DataPoint = {
-                    values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
-                };
-                if((minY<=parseInt(yAxisPointNeg?.values?.label!))){
-                    yAxisPoints.push(yAxisPointNeg);
-                }else{
-                    negativeNumbers.push({value: parseInt(yAxisPointNeg?.values?.label!), index: i});
-                }
-
-            }
-            
-            
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(minY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
         } else {
             const yAxisPoint: DataPoint = {
                 values: { x: "0", y: ((chartHeight - chartPadding) - (i / 4) * (chartHeight - 10 - chartPadding)), label: String(((i / 4) * Math.abs(maxY)).toFixed(0)) }
             };
             yAxisPoints.push(yAxisPoint);
 
-            if(minY<0){
-                const yAxisPointNeg: DataPoint = {
-                    values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
-                };
-                if((minY<=parseInt(yAxisPointNeg?.values?.label!))){
-                    yAxisPoints.push(yAxisPointNeg);
-                }else{
-                    negativeNumbers.push({value: parseInt(yAxisPointNeg?.values?.label!), index: i});
-                }
-            }
-
-            
-            
+            const yAxisPointNeg: DataPoint = {
+                values: { x: "0", y: ((chartHeight - chartPadding) + (i / 4) * (chartHeight - 10 - chartPadding)), label: String(-((i / 4) * Math.abs(maxY)).toFixed(0)) }
+            };
+            yAxisPoints.push(yAxisPointNeg);
         }
-        
 
-    }
-    if(negativeNumbers.length>0){
-        negativeNumbers.sort((a,b)=>b.value-a.value);
-        const yAxisPointNeg: DataPoint = {
-            values: { x: "0", y: ((chartHeight - chartPadding) + (negativeNumbers[0]?.index! / 4) * (chartHeight - 10 - chartPadding)), label: String(-((negativeNumbers[0]?.index! / 4) * Math.abs(maxY)).toFixed(0)) }
-        };
-        yAxisPoints.push(yAxisPointNeg);
     }
     return (
         <View style={[
-            StyleSheet.absoluteFill,
             { alignItems: 'center', justifyContent: 'center' },
         ]}>
-            <View {...panResponder.panHandlers} style={{ backgroundColor: 'yellow' }}>
-                <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`${0} ${0} ${700} ${700}`} style={{ backgroundColor: 'yellow' }}>
-                    <G transform="translate(50,20)">
+            <View  style={{ backgroundColor: 'white' }}>
+                <Svg key={1000} height={800} width={chartWidth} viewBox={`${0} ${0} ${700} ${700}`} style={{ backgroundColor: 'white' }}>
+                    <G transform="translate(100,20)">
                         <Text
-                            x={0 }
+                            key={Math.random()+"linechartkey"}
+                            x={0}
                             y={10}
                             fontSize="18"
                             fontWeight="bold"
@@ -226,7 +107,7 @@ const panResponder = useRef(
                         </Text>
                     </G>
                     
-                    <G transform={"translate(0,100)"}>
+                    <G transform={"translate(100,100)"}>
                         <Polyline
                             key={"axis"}
                             points={`${chartPadding},0 ${chartPadding},${chartHeight - chartPadding} ${chartWidth + chartPadding},${chartHeight - chartPadding}`}
@@ -234,18 +115,27 @@ const panResponder = useRef(
                             stroke={Colors.axis}
                             strokeWidth="2"
                         />
+                        <Polyline
+                            key={"axis-2"}
+                            points={`${chartPadding},${chartHeight - chartPadding} `}
+                            fill="none"
+                            stroke={Colors.axis}
+                            strokeWidth="2"
+                        />
                         {yAxisPoints.map((points, index) =>
                             < React.Fragment key={index + "group"}>
-                                <Line
-                                    key={index + "x-dash"}
-                                    x1={- 5 + chartPadding}
-                                    y1={points?.values?.y}
-                                    x2={chartPadding}
-                                    y2={points?.values?.y}
-                                    stroke="blue"
-                                    strokeWidth={2}
-                                />
+                                
                                 <Text x={0} y={`${points?.values?.y-3}`} color={"blue"} alignmentBaseline='center'>{points?.values?.label}</Text>
+                                <Line
+                                        key={index+ "dashline"}
+                                        x1={chartPadding}
+                                        y1={`${points?.values?.y}`}
+                                        x2={chartWidth + chartPadding}
+                                        y2={`${points?.values?.y}`}
+                                        stroke={Colors.axis}
+                                        strokeWidth="2"
+                                        strokeDasharray="5, 5"
+                                    />  
                             </React.Fragment>
                         )}
                         {pointsArray.map((points, index) => {
@@ -259,22 +149,49 @@ const panResponder = useRef(
                                 />
                             )
                         })}
+                        {chartDataPoints.map((points, index) =>
+                            points.map((point, idx) => (
+                                < React.Fragment key={index + idx + "group"}>
+                                    <Line
+                                        key={"dashline"+index}
+                                        x1={point?.values?.x}
+                                        y1="0"
+                                        x2={point?.values?.x}
+                                        y2="750"
+                                        stroke={Colors.axis}
+                                        strokeWidth="2"
+                                        strokeDasharray="5, 5"
+                                    />                                    
+                                </React.Fragment>
+                            ))
+
+                        )}
 
                         {chartDataPoints.map((points, index) =>
                             points.map((point, idx) => (
                                 < React.Fragment key={index + idx + "group"}>
                                     <Circle
-                                        key={index * 100}
+                                        key={index + "chartpoint"}
                                         cx={point?.values?.x}
                                         cy={point?.values?.y}
                                         r="5"
                                         stroke={colorArray[index]}
                                         fill={colorArray[index]}
                                     />
+                                    
                                 </React.Fragment>
                             ))
 
                         )}
+                        {
+                            labelArray.map((label,index)=>{
+                                return(
+                                    <React.Fragment key={Math.random()+"label"}>
+                                        <Text textAnchor='end' key={index+"linelabel"} x={label.x} y={750} transform={`rotate(270 ${label.x} 750)`}>{label.label}</Text>
+                                    </React.Fragment>
+                                )
+                            })
+                        }
                     </G>
                 </Svg>
             </View>
