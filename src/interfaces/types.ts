@@ -2,41 +2,33 @@
  * Represents a single data point on the chart.
  */
 export interface LineChartProps {
-    /**
-     * Chart name
-     */
-    title: string;
-    subtitle?: string;
+    title: string,
+    subtitle?: string,
     data: {
-        label: string;
-        value: number;
-    }[][];
-}[]
-
-export interface ColumnChartProps {
-    title: string;
-    subtitle?: string;
-    data: {
-        label: string;
-        value: number;
+        name: string,
+        points: {
+            label: string,
+            value: number,
+        }[];
     }[];
 }
+[]
 
 export interface BarChartProps {
-    title: string;
-    subtitle?: string;
+    title: string,
+    subtitle?: string,
     data: {
-        label: string;
-        value: number;
+        label: string,
+        value: number,
     }[];
 }
 
 export interface LollipopChartProps {
-    name: string;
-    subtitle?: string;
+    name: string,
+    subtitle?: string,
     data: {
         label: string,
-        value: number
+        value: number,
     }[];
 }
 
@@ -44,39 +36,39 @@ export interface LollipopChartProps {
 
 export interface DataPoint {
     values: {
-        x: string;
-        y: number;
-        label?: string;
-        exactValue?: number;
+        x: string,
+        y: number,
+        label?: string,
+        exactValue?: number,
     };
 }
 export interface SlopeChartProps {
-    title: string;
+    title: string,
     label_1: string,
     label_2: string,
     values: {
         y1: number,
         y2: number,
-        label: string
+        label: string,
     }[],
 
 }
 
 export interface PopulationChartProps {
-    chartTitle: string;
-    leftLabel: string;
-    rightLabel: string;
+    chartTitle: string,
+    leftLabel: string,
+    rightLabel: string,
     data: {
-        category: string;
-        leftValue: number;
-        rightValue: number;
+        category: string,
+        leftValue: number,
+        rightValue: number,
     }[];
 }
 
 export interface PieChartProps {
-    title: string;
+    title: string,
     data: {
-        label: string;
-        value: number;
+        label: string,
+        value: number,
     }[];
 }

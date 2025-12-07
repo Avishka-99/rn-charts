@@ -1,11 +1,19 @@
 import { View } from 'react-native';
 import React from 'react';
-import Svg, { Circle, G, Text, Polyline, Line } from 'react-native-svg';
+import Svg, { Circle, G, Text, Polyline, Line, Rect } from 'react-native-svg';
 import type { LineChartProps, DataPoint } from '../../interfaces/types';
 import { Colors } from '../../utils/enums';
-import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH } from '../../utils/constants';
+import { CHART_HEIGHT, CHART_PADDING } from '../../utils/constants';
+import { getRandomVibrantColors } from '../../utils/functions';
 
 const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
+
+    if(data.length===0){
+        throw new Error("Data array cannot be empty");
+    }
+    if(data.length>16){
+        throw new Error("Linechart currently supports a maximum of 16 items");
+    }
 
     const chartWidth: number = 480;
     const chartHeight: number = CHART_HEIGHT;
@@ -18,9 +26,10 @@ const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
     }
 
     const labelArray:LabelPoints[] =[];
+    const chartTitles:string[]=[];
 
-    data[0]?.map((line,_index)=>{
-        const x = (_index / (data[0]!.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+    data[0]?.points.map((line,_index)=>{
+        const x = (_index / (data[0]!.points.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         labelArray.push({
             label:line.label,
             x:x
@@ -28,19 +37,21 @@ const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
     })
 
 
-    const maxY = Math.max(...data.flat().map(v => v.value));
-    const minY = Math.min(...data.flat().map(v => v.value));
+    const maxY = Math.max(...data.flatMap(series => series.points.map(p => p.value)));
+    const minY = Math.min(...data.flatMap(series => series.points.map(p => p.value)));
+
     const chartDataPoints: DataPoint[][] = [];
     const yAxisPoints: DataPoint[] = [];
 
-    const colorArray: string[] = ["#FF5733", "#33FF57"];
+    const colorArray: string[] = getRandomVibrantColors(data.length);
 
     let pointsArray: string[] = [];
     data.map(chartValues => {
         let points: string = "";
         let dataPointArray: DataPoint[] = [];
-        chartValues.map((v, i) => {
-            const x = (i / (chartValues.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
+        chartTitles.push(chartValues.name);
+        chartValues.points.map((v, i) => {
+            const x = (i / (chartValues.points.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
             if (Math.abs(minY) > maxY) {
                 const y = ((chartHeight - chartPadding) - (v.value / Math.abs(minY)) * (chartHeight - 10 - chartPadding));
                 const chartDataPoint: DataPoint = {
@@ -87,12 +98,10 @@ const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
 
     }
     return (
-        <View style={[
-            { alignItems: 'center', justifyContent: 'center' },
-        ]}>
+        <View>
             <View  style={{ backgroundColor: 'white' }}>
-                <Svg key={1000} height={800} width={chartWidth} viewBox={`${0} ${0} ${700} ${700}`} style={{ backgroundColor: 'white' }}>
-                    <G transform="translate(100,20)">
+                <Svg key={1000} height={700} width={chartWidth} viewBox={`${0} ${0} ${700} ${700}`} style={{ backgroundColor: 'white' }}>
+                    <G transform="translate(100,-140)">
                         <Text
                             key={Math.random()+"linechartkey"}
                             x={0}
@@ -100,14 +109,14 @@ const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
                             fontSize="18"
                             fontWeight="bold"
                             fill="black"
-                            textAnchor="middle"
+                            textAnchor="start"
                         
                         >
                             {title}
                         </Text>
                     </G>
                     
-                    <G transform={"translate(100,100)"}>
+                    <G transform={"translate(100,-100)"}>
                         <Polyline
                             key={"axis"}
                             points={`${chartPadding},0 ${chartPadding},${chartHeight - chartPadding} ${chartWidth + chartPadding},${chartHeight - chartPadding}`}
@@ -192,6 +201,38 @@ const LineChart: React.FC<LineChartProps> = ({ title, data }) => {
                                 )
                             })
                         }
+                        <G transform={"translate(0,780)"}>
+                            {
+                                chartTitles.map((title,index)=>{
+                                    return(
+                                        <React.Fragment key={index + "line" + Date.now().toString()}>
+                                            <Rect
+                                                y={(35) * ((index%3) + 1)}
+                                                x={0+parseInt(((index/3)).toString())*100}
+                                                height={10}
+                                                width={10}
+                                                stroke={colorArray[index]}
+                                                strokeWidth="2"
+                                                fill={colorArray[index]}
+                                                rx={10}
+                                                ry={10}
+                                            ></Rect>
+                                            <Text 
+                                                y={(35) * ((index%3) + 1) +15} 
+                                                x={30+parseInt(((index/3)).toString())*100}
+                                                fontSize={15}
+                                                fontWeight={800}
+                                                fill={"black"}
+                                                textAnchor='start'
+                                            >
+                                                {title}
+                                            </Text>
+                                        </React.Fragment>
+                                    )
+                                })
+                            }
+                        </G>
+                        
                     </G>
                 </Svg>
             </View>

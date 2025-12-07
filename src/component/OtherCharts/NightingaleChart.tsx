@@ -62,7 +62,6 @@ const NightingaleChart: React.FC<PieChartProps> = ({ title, data }) => {
                             fontWeight="bold"
                             fill="black"
                             textAnchor="start"
-                        
                         >
                             {title}
                         </Text>

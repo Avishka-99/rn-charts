@@ -13,18 +13,11 @@ const PieChart: React.FC<PieChartProps> = ({ title, data }) => {
     }[]
 
     const chartData: chartData = [];
-    const max: number = Math.max(...data.map(v => v.value));
     const sliceAngle: number = (2 * Math.PI) / data.length;
     const center = NIGHTINGALE_CHART_WIDTH / 5;
-    //const maxRadius = center - 10;
-
-    // const offsetRefX = useRef(0);
-    // const offsetRefY = useRef(0);
-    // let pointsArray: { label: string, value: number, exactValue: number }[] = [];
 
     data.map((v, i) => {
         const radius: number = (NIGHTINGALE_CHART_HEIGHT / 5);
-        //const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const startAngle: number = i * sliceAngle;
         const endAngle: number = (i + 1) * sliceAngle;
 

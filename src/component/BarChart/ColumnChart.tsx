@@ -1,11 +1,11 @@
-import type { ColumnChartProps } from '../../interfaces/types';
+import type { BarChartProps } from '../../interfaces/types';
 import { View } from 'react-native';
 import React from 'react';
 import Svg, { G, Polyline,Rect, Text } from 'react-native-svg';
 import { CHART_HEIGHT, CHART_PADDING, CHART_WIDTH, BAR_WIDTH } from "../../utils/constants";
 import { getRandomVibrantColors } from '../../utils/functions';
 
-const ColumnChart: React.FC<ColumnChartProps> = ({ title, data }) => {
+const ColumnChart: React.FC<BarChartProps> = ({ title, data }) => {
 
     if(data.length===0){
         throw new Error("Data array cannot be empty");
@@ -26,10 +26,11 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ title, data }) => {
 
 
     let pointsArray: { label: string, value: number }[] = [];
+    let pointsArray2: { label: string, value: number }[] = [];
     data.map((v, _i) => {
-        //const x = (i / (data.length - 1)) * (chartWidth - 10 - chartPadding) + chartPadding;
         const y = ((chartHeight - chartPadding) - (v.value / maxY) * (chartHeight - 10 - chartPadding));
         pointsArray.push({ label: v.label, value: y });
+        pointsArray2.push({ label: v.label, value: v.value });
     });
 
 
@@ -76,7 +77,7 @@ const ColumnChart: React.FC<ColumnChartProps> = ({ title, data }) => {
                         })}
                     </G>
                     <G transform={`translate(${0},500)`}>
-                        {pointsArray.map((bar, index) => (
+                        {pointsArray2.map((bar, index) => (
                             <React.Fragment key={index + "bar" + Date.now().toString()}>
                                 <Rect
                                     y={(35) * ((index%8) + 1)}

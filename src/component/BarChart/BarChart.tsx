@@ -33,12 +33,12 @@ const BarChart: React.FC<BarChartProps> = ({ title, data }) => {
                 <Svg key={1000} height={chartHeight} width={chartWidth} viewBox={`0 0 700 700`} style={{ backgroundColor: 'white' }}>
                     <G transform="translate(0,15)">
                         <Text
-                            x={60}
+                            x={20}
                             y={10}
                             fontSize="32"
                             fontWeight="bold"
                             fill="black"
-                            textAnchor="middle"
+                            textAnchor="start"
                         
                         >
                             {title}

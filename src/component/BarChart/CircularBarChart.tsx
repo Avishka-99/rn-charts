@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import React from 'react';
-import { CHART_HEIGHT, CHART_WIDTH } from '../../utils/constants';
+import { CHART_WIDTH } from '../../utils/constants';
 import type { BarChartProps } from '../../interfaces/types';
 import Svg, {  G, Path, Rect, Text } from 'react-native-svg';
 import { RADIAL_CHART_START_ANGLE, STROKE_WIDTH, RADIAL_CHART_INITIAL_RADIUS, CHART_TITLE_FONT_SIZE } from '../../utils/constants';
@@ -57,7 +57,7 @@ const CircularBarChart: React.FC<BarChartProps> = ({ title, data }) => {
                             fontSize={CHART_TITLE_FONT_SIZE}
                             fontWeight="bold"
                             fill="black"
-                            textAnchor="middle"
+                            textAnchor="start"
                         >
                             {title}
                         </Text>
